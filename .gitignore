@@ -3,6 +3,11 @@
 /node_modules
 /build
 
+# Prevent compiled JS files in src
+/src/**/*.js
+/*.js
+!*.config.js
+
 # Logs
 logs
 *.log

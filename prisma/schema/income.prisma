@@ -1,0 +1,31 @@
+model Income {
+  id            String
+  transactionId String @unique @map("transaction_id")
+  storeId       String @map("store_id")
+  categoryId    String @map("category_id")
+
+  category    IncomeCategory @relation(fields: [categoryId], references: [id])
+  transaction Transaction    @relation(fields: [transactionId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([id])
+  @@map("income")
+}
+
+model IncomeCategory {
+  id       String  @id @default(uuid())
+  parentId String? @map("parent_id")
+
+  name String @unique
+
+  parent   IncomeCategory?  @relation(name: "children", fields: [parentId], references: [id])
+  children IncomeCategory[] @relation(name: "children")
+  incomes  Income[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("income_category")
+}

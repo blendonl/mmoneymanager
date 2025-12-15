@@ -1,0 +1,48 @@
+model Store {
+  id String @id @default(uuid())
+
+  name     String
+  location String
+
+  items    StoreItem[]
+  expenses Expense[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("store")
+}
+
+model StoreItem {
+  id      String @id @default(uuid())
+  storeId String @map("store_id")
+
+  name         String
+  price        Decimal
+  isDiscounted Boolean @map("is_discounted")
+
+  store     Store               @relation(fields: [storeId], references: [id])
+  discounts StoreItemDiscount[]
+  expenses  ExpenseItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("store_item")
+}
+
+model StoreItemDiscount {
+  id          String @id
+  storeItemId String @map("store_item_id")
+
+  discount  Decimal
+  startedAt DateTime  @default(now()) @map("started_at")
+  endedAt   DateTime? @map("ended_at")
+
+  storeItem StoreItem @relation(fields: [storeItemId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("store_item_discount")
+}

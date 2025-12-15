@@ -1,27 +1,56 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "target": "ES2023",
-    "strict": true,
-    "esModuleInterop": true,
-    "ignoreDeprecations": "6.0"
-    "resolvePackageJsonExports": true,
-    "isolatedModules": true,
+    "moduleResolution": "Node",
+    "module": "CommonJS",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "ES2022",
+    "lib": [
+      "ES2022"
+    ],
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
-  }
+    "strict": true,
+    "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": true,
+    "alwaysStrict": true,
+    "paths": {
+      "~*": [
+        "./src/*"
+      ],
+      "~test/*": [
+        "./test/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/.*.scaffold.ts",
+    "**/.scaffold.ts",
+    "**/.scaffold/*",
+    "packages",
+    "src/common/logger/pino",
+    "src/common/logger/otel",
+    "src/common/logger/sentry",
+    "src/common/email/providers/aws-ses",
+    "src/common/queues/providers/pg-boss",
+    "src/common/media/providers/aws-s3",
+    "src/common/authn/providers/auth0",
+    "src/common/authn/providers/google",
+    "src/common/authn/session",
+    "src/common/kvstore"
+  ]
 }
+
