@@ -1,0 +1,40 @@
+import { Prisma } from 'prisma/generated/prisma/client';
+import { Expense } from '../../domain/entities/expense.entity';
+import { TransactionMapper } from '~feature/transaction/core/infrastructure/mappers/transaction.mapper';
+import { StoreMapper } from '~feature/store/core/infrastructure/mappers/store.mapper';
+import { ExpenseCategoryMapper } from '~feature/expense-category/core/infrastructure/mappers/expense-category.mapper';
+
+interface PrismaExpense extends Prisma.ExpenseGetPayload<{
+  include: {
+    category: true;
+    store: true;
+    transaction: true;
+  };
+}> {}
+
+export class ExpenseMapper {
+  static toDomain(prismaExpense: PrismaExpense): Expense {
+    return new Expense({
+      id: prismaExpense.id,
+      transactionId: prismaExpense.transactionId,
+      transaction: TransactionMapper.toDomain(prismaExpense.transaction),
+      store: StoreMapper.toDomain(prismaExpense.store),
+      category: ExpenseCategoryMapper.toDomain(prismaExpense.category),
+      storeId: prismaExpense.storeId,
+      categoryId: prismaExpense.categoryId,
+      createdAt: prismaExpense.createdAt,
+      updatedAt: prismaExpense.updatedAt,
+    });
+  }
+
+  static toPersistence(expense: Expense) {
+    return {
+      id: expense.id,
+      transactionId: expense.transactionId,
+      storeId: expense.storeId,
+      categoryId: expense.categoryId,
+      createdAt: expense.createdAt,
+      updatedAt: expense.updatedAt,
+    };
+  }
+}

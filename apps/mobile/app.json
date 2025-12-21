@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "mmoneymanager",
+    "slug": "mmoneymanager",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "ios": {
+      "bundleIdentifier": "com.mmoneymanager.app",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.mmoneymanager.app",
+      "usesCleartextTraffic": true
+    }
+  }
+}

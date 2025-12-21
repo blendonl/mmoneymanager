@@ -1,0 +1,160 @@
+import { useState, useEffect, useCallback } from 'react';
+import { apiClient } from '../api/client';
+
+export interface Transaction {
+  id: string;
+  type: 'expense' | 'income';
+  category: {
+    id: string;
+    name: string;
+  };
+  store?: {
+    id: string;
+    name: string;
+    location?: string;
+  };
+  transaction: {
+    id: string;
+    value: number;
+    createdAt?: string;
+    description?: string;
+  };
+  items?: Array<{
+    name: string;
+    price: number;
+    discount?: number;
+  }>;
+  receiptImages?: string[];
+}
+
+export const useTransactions = () => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchTransactions = async (isRefresh = false) => {
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+      setError(null);
+
+      const [expensesResponse, incomesResponse] = await Promise.all([
+        apiClient.get('/expenses'),
+        apiClient.get('/incomes'),
+      ]);
+
+      const expenses: Transaction[] = (expensesResponse.data || []).map((expense: any) => ({
+        id: expense.id,
+        type: 'expense' as const,
+        category: expense.category,
+        store: expense.store,
+        transaction: {
+          ...expense.transaction,
+          description: expense.transaction?.description,
+        },
+        items: expense.items,
+        receiptImages: expense.receiptImages || [],
+      }));
+
+      const incomes: Transaction[] = (incomesResponse.data || []).map((income: any) => ({
+        id: income.id,
+        type: 'income' as const,
+        category: { id: income.id, name: income.label || 'Income' },
+        transaction: {
+          id: income.id,
+          value: income.amount,
+          createdAt: income.createdAt,
+          description: income.description,
+        },
+        receiptImages: income.receiptImages || [],
+      }));
+
+      const allTransactions = [...expenses, ...incomes].sort((a, b) => {
+        const dateA = a.transaction.createdAt ? new Date(a.transaction.createdAt).getTime() : 0;
+        const dateB = b.transaction.createdAt ? new Date(b.transaction.createdAt).getTime() : 0;
+        return dateB - dateA;
+      });
+
+      setTransactions(allTransactions);
+    } catch (err: any) {
+      setError(err.message || 'Failed to fetch transactions');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  const refresh = useCallback(() => {
+    fetchTransactions(true);
+  }, []);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  const groupByMonth = (transactions: Transaction[]) => {
+    const groups: { [key: string]: Transaction[] } = {};
+
+    transactions.forEach((transaction) => {
+      if (transaction.transaction.createdAt) {
+        const date = new Date(transaction.transaction.createdAt);
+        const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+        const monthLabel = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+        if (!groups[monthKey]) {
+          groups[monthKey] = [];
+        }
+        groups[monthKey].push(transaction);
+      }
+    });
+
+    return Object.entries(groups).map(([key, items]) => {
+      const date = new Date(items[0].transaction.createdAt!);
+      const monthLabel = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      const total = items.reduce((sum, item) => sum + item.transaction.value, 0);
+
+      return {
+        key,
+        monthLabel,
+        total,
+        transactions: items,
+      };
+    });
+  };
+
+  const getStats = (transactions: Transaction[]) => {
+    const totalExpenses = transactions
+      .filter((t) => t.type === 'expense')
+      .reduce((sum, t) => sum + t.transaction.value, 0);
+
+    const totalIncome = transactions
+      .filter((t) => t.type === 'income')
+      .reduce((sum, t) => sum + t.transaction.value, 0);
+
+    const count = transactions.length;
+    const average = count > 0 ? transactions.reduce((sum, t) => sum + t.transaction.value, 0) / count : 0;
+
+    return {
+      totalExpenses,
+      totalIncome,
+      net: totalIncome - totalExpenses,
+      count,
+      average,
+    };
+  };
+
+  return {
+    transactions,
+    loading,
+    error,
+    refreshing,
+    refresh,
+    groupByMonth,
+    getStats,
+    retry: () => fetchTransactions(),
+  };
+};

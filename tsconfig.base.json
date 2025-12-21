@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "module": "CommonJS",
+    "declaration": true,
+    "esModuleInterop": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": true,
+    "alwaysStrict": true,
+    "allowSyntheticDefaultImports": true
+  }
+}
