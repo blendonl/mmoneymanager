@@ -1,17 +1,25 @@
-import { StoreItem as PrismaStoreItem } from 'prisma/generated/prisma/client';
+import {
+  StoreItem as PrismaStoreItem,
+  Item as PrismaItem,
+} from 'prisma/generated/prisma/client';
 import { StoreItem } from '../../domain/entities/store-item.entity';
+import { ItemMapper } from '~feature/item/core/infrastructure/mappers/item.mapper';
 
 export class StoreItemMapper {
-  static toDomain(prismaStoreItem: PrismaStoreItem): StoreItem {
+  static toDomain(
+    prismaStoreItem: PrismaStoreItem & { item?: PrismaItem },
+  ): StoreItem {
     return new StoreItem({
       id: prismaStoreItem.id,
       storeId: prismaStoreItem.storeId,
-      name: prismaStoreItem.name,
+      itemId: prismaStoreItem.itemId,
       price: prismaStoreItem.price,
       isDiscounted: prismaStoreItem.isDiscounted,
-      categoryId: prismaStoreItem.categoryId,
       createdAt: prismaStoreItem.createdAt,
       updatedAt: prismaStoreItem.updatedAt,
+      item: prismaStoreItem.item
+        ? ItemMapper.toDomain(prismaStoreItem.item)
+        : undefined,
     });
   }
 
@@ -19,7 +27,7 @@ export class StoreItemMapper {
     return {
       id: storeItem.id,
       storeId: storeItem.storeId,
-      name: storeItem.name,
+      itemId: storeItem.itemId,
       price: storeItem.price,
       isDiscounted: storeItem.isDiscounted,
       createdAt: storeItem.createdAt,

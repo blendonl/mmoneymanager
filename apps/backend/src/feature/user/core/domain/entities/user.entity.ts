@@ -20,8 +20,7 @@ export class User {
   private validate(props: UserProps): void {
     if (!props.id?.trim()) throw new Error('User ID is required');
     if (!props.email?.includes('@')) throw new Error('Valid email is required');
-    if (!props.firstName?.trim()) throw new Error('First name is required');
-    if (!props.lastName?.trim()) throw new Error('Last name is required');
+    // firstName and lastName can be empty (e.g., OAuth users)
   }
 
   get id(): string {
@@ -50,7 +49,14 @@ export class User {
   }
 
   get fullName(): string {
-    return `${this.props.firstName} ${this.props.lastName}`;
+    const firstName = this.props.firstName?.trim();
+    const lastName = this.props.lastName?.trim();
+
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    }
+
+    return firstName || lastName || 'Unknown User';
   }
 
   toJSON() {

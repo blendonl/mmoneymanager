@@ -1,11 +1,12 @@
 import { Decimal } from 'prisma/generated/prisma/internal/prismaNamespace';
+import { Item } from '~feature/item/core';
 export interface StoreItemProps {
     id: string;
     storeId: string;
-    name: string;
+    itemId: string;
     price: Decimal;
     isDiscounted: boolean;
-    categoryId: string;
+    item?: Item;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -13,21 +14,29 @@ export declare class StoreItem {
     private readonly props;
     constructor(props: StoreItemProps);
     private validate;
-    get categoryId(): string;
     get id(): string;
     get storeId(): string;
-    get name(): string;
+    get itemId(): string;
+    get item(): Item | undefined;
     get price(): Decimal;
     get isDiscounted(): boolean;
     get createdAt(): Date;
     get updatedAt(): Date;
-    getCurrentPrice(): Decimal;
+    getCurrentPrice(activeDiscount?: any): Decimal;
+    getDiscountPercentage(activeDiscount?: any): number;
     toJSON(): {
         id: string;
         storeId: string;
-        name: string;
+        itemId: string;
         price: number;
         isDiscounted: boolean;
+        item: {
+            id: string;
+            categoryId: string;
+            name: string;
+            createdAt: Date;
+            updatedAt: Date;
+        } | undefined;
         createdAt: Date;
         updatedAt: Date;
     };

@@ -3,10 +3,12 @@ import { Decimal } from 'prisma/generated/prisma/internal/prismaNamespace';
 export interface ExpenseItemProps {
   id: string;
   itemId: string;
+  itemName: string;
   expenseId: string;
   categoryId: string;
   price: Decimal;
   discount: Decimal;
+  quantity: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +30,10 @@ export class ExpenseItem {
       throw new Error('Item ID is required');
     }
 
+    if (!props.itemName || props.itemName.trim() === '') {
+      throw new Error('Item name is required');
+    }
+
     if (!props.expenseId || props.expenseId.trim() === '') {
       throw new Error('Expense ID is required');
     }
@@ -42,6 +48,10 @@ export class ExpenseItem {
 
     if (!props.discount || props.discount.toNumber() < 0) {
       throw new Error('Discount must be non-negative');
+    }
+
+    if (!props.quantity || props.quantity < 1) {
+      throw new Error('Quantity must be at least 1');
     }
 
     if (props.discount.toNumber() > props.price.toNumber()) {
@@ -65,6 +75,10 @@ export class ExpenseItem {
     return this.props.itemId;
   }
 
+  get itemName(): string {
+    return this.props.itemName;
+  }
+
   get expenseId(): string {
     return this.props.expenseId;
   }
@@ -81,6 +95,10 @@ export class ExpenseItem {
     return this.props.discount;
   }
 
+  get quantity(): number {
+    return this.props.quantity;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt;
   }
@@ -90,7 +108,7 @@ export class ExpenseItem {
   }
 
   getFinalPrice(): Decimal {
-    return this.props.price.minus(this.props.discount);
+    return this.props.price.minus(this.props.discount).times(this.props.quantity);
   }
 
   getDiscountPercentage(): number {
@@ -104,10 +122,12 @@ export class ExpenseItem {
     return {
       id: this.props.id,
       itemId: this.props.itemId,
+      itemName: this.props.itemName,
       expenseId: this.props.expenseId,
       categoryId: this.props.categoryId,
       price: this.props.price.toNumber(),
       discount: this.props.discount.toNumber(),
+      quantity: this.props.quantity,
       finalPrice: this.getFinalPrice().toNumber(),
       discountPercentage: this.getDiscountPercentage(),
       createdAt: this.props.createdAt,

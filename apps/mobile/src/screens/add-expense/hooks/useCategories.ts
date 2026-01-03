@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { Alert } from "react-native";
 import { apiClient } from "../../../api/client";
-import { Category } from "../types";
+import { Category } from "../../../features/expenses/types";
 
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [itemCategories, setItemCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
   const [categoryInput, setCategoryInput] = useState("");
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
@@ -86,9 +88,9 @@ export function useCategories() {
       });
 
       const newCategory: Category = {
-        id: response.data.id,
-        name: response.data.name,
-        isConnectedToStore: response.data.isConnectedToStore,
+        id: response.id,
+        name: response.name,
+        isConnectedToStore: response.isConnectedToStore,
       };
 
       setCategories([...categories, newCategory]);

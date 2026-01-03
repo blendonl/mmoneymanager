@@ -1,0 +1,79 @@
+import { Module } from '@nestjs/common';
+import { PrismaModule } from '../../../common/prisma/prisma.module';
+
+// Repositories
+import { PrismaNotificationRepository } from './infrastructure/repositories/prisma-notification.repository';
+import { PrismaNotificationPreferenceRepository } from './infrastructure/repositories/prisma-notification-preference.repository';
+import { PrismaDeviceTokenRepository } from './infrastructure/repositories/prisma-device-token.repository';
+
+// Services
+import { NotificationTemplateService } from './application/services/notification-template.service';
+import { NotificationPreferenceService } from './application/services/notification-preference.service';
+import { NotificationDeliveryService } from './application/services/notification-delivery.service';
+import { ExpoPushNotificationService } from './infrastructure/services/expo-push-notification.service';
+
+// Use Cases
+import { CreateNotificationUseCase } from './application/use-cases/create-notification.use-case';
+import { GetNotificationsUseCase } from './application/use-cases/get-notifications.use-case';
+import { GetUnreadCountUseCase } from './application/use-cases/get-unread-count.use-case';
+import { MarkNotificationAsReadUseCase } from './application/use-cases/mark-notification-as-read.use-case';
+import { MarkAllAsReadUseCase } from './application/use-cases/mark-all-as-read.use-case';
+import { DeleteNotificationUseCase } from './application/use-cases/delete-notification.use-case';
+import { GetNotificationPreferencesUseCase } from './application/use-cases/get-notification-preferences.use-case';
+import { UpdateNotificationPreferencesUseCase } from './application/use-cases/update-notification-preferences.use-case';
+import { RegisterDeviceTokenUseCase } from './application/use-cases/register-device-token.use-case';
+import { UnregisterDeviceTokenUseCase } from './application/use-cases/unregister-device-token.use-case';
+
+@Module({
+  imports: [PrismaModule],
+  providers: [
+    // Repositories
+    {
+      provide: 'NotificationRepository',
+      useClass: PrismaNotificationRepository,
+    },
+    {
+      provide: 'NotificationPreferenceRepository',
+      useClass: PrismaNotificationPreferenceRepository,
+    },
+    {
+      provide: 'DeviceTokenRepository',
+      useClass: PrismaDeviceTokenRepository,
+    },
+
+    // Services
+    NotificationTemplateService,
+    NotificationPreferenceService,
+    NotificationDeliveryService,
+    ExpoPushNotificationService,
+
+    // Use Cases
+    CreateNotificationUseCase,
+    GetNotificationsUseCase,
+    GetUnreadCountUseCase,
+    MarkNotificationAsReadUseCase,
+    MarkAllAsReadUseCase,
+    DeleteNotificationUseCase,
+    GetNotificationPreferencesUseCase,
+    UpdateNotificationPreferencesUseCase,
+    RegisterDeviceTokenUseCase,
+    UnregisterDeviceTokenUseCase,
+  ],
+  exports: [
+    // Export use cases for other modules
+    CreateNotificationUseCase,
+    GetNotificationsUseCase,
+    GetUnreadCountUseCase,
+    MarkNotificationAsReadUseCase,
+    MarkAllAsReadUseCase,
+    DeleteNotificationUseCase,
+    GetNotificationPreferencesUseCase,
+    UpdateNotificationPreferencesUseCase,
+    RegisterDeviceTokenUseCase,
+    UnregisterDeviceTokenUseCase,
+
+    // Export services for other modules
+    NotificationDeliveryService,
+  ],
+})
+export class NotificationCoreModule {}

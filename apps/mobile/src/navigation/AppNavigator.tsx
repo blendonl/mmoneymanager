@@ -2,11 +2,17 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
+import { useAppTheme } from '../theme';
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import AddTransactionScreen from '../screens/AddTransactionScreen';
 import TransactionDetailScreen from '../screens/transactions/TransactionDetailScreen';
-import MainTabs from './MainTabs';
+import FamilyListScreen from '../screens/family/FamilyListScreen';
+import FamilyDetailScreen from '../screens/family/FamilyDetailScreen';
+import CreateFamilyScreen from '../screens/family/CreateFamilyScreen';
+import InviteMemberScreen from '../screens/family/InviteMemberScreen';
+import PendingInvitationsScreen from '../screens/family/PendingInvitationsScreen';
+import { MainTabsWithFAB } from './MainTabsWithFAB';
 import { View, ActivityIndicator } from 'react-native';
 
 const Stack = createStackNavigator();
@@ -15,6 +21,7 @@ const Stack = createStackNavigator();
 
 export default function AppNavigator() {
     const { token, isLoading } = useAuth();
+    const { theme } = useAppTheme();
 
     if (isLoading) {
         return (
@@ -24,18 +31,31 @@ export default function AppNavigator() {
         );
     }
 
+    const screenOptions = {
+        headerStyle: {
+            backgroundColor: theme.colors.surface,
+            elevation: 0,
+            shadowOpacity: 0,
+        },
+        headerTintColor: theme.colors.onSurface,
+        headerTitleStyle: {
+            fontWeight: '600' as const,
+        },
+    };
+
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {token ? (
                     <>
-                        <Stack.Screen name="Main" component={MainTabs} />
+                        <Stack.Screen name="Main" component={MainTabsWithFAB} />
                         <Stack.Screen
                             name="AddTransaction"
                             component={AddTransactionScreen}
                             options={{
                                 headerShown: true,
                                 title: 'Add Transaction',
+                                ...screenOptions,
                             }}
                         />
                         <Stack.Screen
@@ -44,6 +64,52 @@ export default function AppNavigator() {
                             options={{
                                 headerShown: true,
                                 title: 'Transaction Details',
+                                ...screenOptions,
+                            }}
+                        />
+                        <Stack.Screen
+                            name="FamilyList"
+                            component={FamilyListScreen}
+                            options={{
+                                headerShown: true,
+                                title: 'My Families',
+                                ...screenOptions,
+                            }}
+                        />
+                        <Stack.Screen
+                            name="FamilyDetail"
+                            component={FamilyDetailScreen}
+                            options={{
+                                headerShown: true,
+                                title: 'Family Details',
+                                ...screenOptions,
+                            }}
+                        />
+                        <Stack.Screen
+                            name="CreateFamily"
+                            component={CreateFamilyScreen}
+                            options={{
+                                headerShown: true,
+                                title: 'Create Family',
+                                ...screenOptions,
+                            }}
+                        />
+                        <Stack.Screen
+                            name="InviteMember"
+                            component={InviteMemberScreen}
+                            options={{
+                                headerShown: true,
+                                title: 'Invite Member',
+                                ...screenOptions,
+                            }}
+                        />
+                        <Stack.Screen
+                            name="PendingInvitations"
+                            component={PendingInvitationsScreen}
+                            options={{
+                                headerShown: true,
+                                title: 'Pending Invitations',
+                                ...screenOptions,
                             }}
                         />
                     </>

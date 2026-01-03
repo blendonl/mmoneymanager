@@ -22,6 +22,7 @@ interface InputProps {
   style?: ViewStyle;
   onFocus?: () => void;
   onBlur?: () => void;
+  glass?: boolean;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -43,8 +44,44 @@ export const Input: React.FC<InputProps> = ({
   style,
   onFocus,
   onBlur,
+  glass = false,
 }) => {
   const { theme } = useAppTheme();
+
+  const getGlassStyles = () => {
+    if (glass) {
+      return {
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      };
+    }
+    return {};
+  };
+
+  const getGlassTextColors = () => {
+    if (glass) {
+      return {
+        textColor: '#FFFFFF',
+        placeholderTextColor: 'rgba(255, 255, 255, 0.5)',
+        activeOutlineColor: 'rgba(255, 255, 255, 0.6)',
+        outlineColor: error ? '#ff6b6b' : 'rgba(255, 255, 255, 0.3)',
+      };
+    }
+    return {};
+  };
+
+  const getGlassTheme = () => {
+    if (glass) {
+      return {
+        colors: {
+          onSurfaceVariant: 'rgba(255, 255, 255, 0.5)',
+          onSurface: '#FFFFFF',
+        },
+      };
+    }
+    return {};
+  };
+
+  const getIconColor = () => glass ? 'rgba(255, 255, 255, 0.7)' : undefined;
 
   return (
     <TextInput
@@ -60,18 +97,21 @@ export const Input: React.FC<InputProps> = ({
       numberOfLines={numberOfLines}
       error={error}
       disabled={disabled}
-      left={leftIcon ? <TextInput.Icon icon={leftIcon} /> : undefined}
+      left={leftIcon ? <TextInput.Icon icon={leftIcon} color={getIconColor()} /> : undefined}
       right={rightIcon ? (
         <TextInput.Icon
           icon={rightIcon}
           onPress={onRightIconPress}
+          color={getIconColor()}
         />
       ) : undefined}
-      style={[styles.input, style]}
-      outlineStyle={styles.outline}
+      style={[styles.input, getGlassStyles(), style]}
+      outlineStyle={glass ? styles.glassOutline : styles.outline}
       contentStyle={theme.custom.typography.body}
       onFocus={onFocus}
       onBlur={onBlur}
+      theme={getGlassTheme()}
+      {...getGlassTextColors()}
     />
   );
 };
@@ -82,5 +122,9 @@ const styles = StyleSheet.create({
   },
   outline: {
     borderRadius: 8,
+  },
+  glassOutline: {
+    borderRadius: 12,
+    borderWidth: 1,
   },
 });

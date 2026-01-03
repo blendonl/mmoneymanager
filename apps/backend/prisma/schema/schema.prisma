@@ -22,6 +22,16 @@ model User {
   accounts     Account[]
   sessions     Session[]
 
+  // Family relationships
+  familyMemberships   FamilyMember[]
+  sentInvitations     FamilyInvitation[] @relation("sent_invitations")
+  receivedInvitations FamilyInvitation[] @relation("received_invitations")
+
+  // Notification relationships
+  notifications          Notification[]
+  notificationPreference NotificationPreference?
+  deviceTokens           DeviceToken[]
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

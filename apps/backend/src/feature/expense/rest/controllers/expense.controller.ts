@@ -38,6 +38,7 @@ export class ExpenseController {
       categoryId: createDto.categoryId,
       storeName: createDto.storeName,
       storeLocation: createDto.storeLocation,
+      familyId: createDto.familyId,
       items: createDto.items.map(
         (item) =>
           new CreateExpenseItemDto({
@@ -46,8 +47,10 @@ export class ExpenseController {
             itemName: item.itemName,
             itemPrice: item.itemPrice,
             discount: item.discount,
+            quantity: item.quantity,
           }),
       ),
+      recordedAt: createDto.recordedAt ? new Date(createDto.recordedAt) : undefined,
     });
 
     const expense = await this.expenseService.create(coreDto);

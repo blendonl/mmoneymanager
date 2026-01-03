@@ -1,4 +1,4 @@
-import { Injectable, Inject, BadRequestException } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { type IStoreRepository } from '../../domain/repositories/store.repository.interface';
 import { CreateStoreDto } from '../dto/create-store.dto';
 import { Store } from '../../domain/entities/store.entity';

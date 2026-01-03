@@ -7,12 +7,16 @@ class CreateExpenseDto {
     storeName;
     storeLocation;
     items;
+    familyId;
+    recordedAt;
     constructor(data) {
         this.userId = data.userId;
         this.categoryId = data.categoryId;
         this.storeName = data.storeName;
         this.storeLocation = data.storeLocation;
         this.items = data.items;
+        this.familyId = data.familyId;
+        this.recordedAt = data.recordedAt;
     }
 }
 exports.CreateExpenseDto = CreateExpenseDto;

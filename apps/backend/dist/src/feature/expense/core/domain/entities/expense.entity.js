@@ -54,6 +54,9 @@ class Expense {
     get transaction() {
         return this.props.transaction;
     }
+    get items() {
+        return this.props.items || [];
+    }
     toJSON() {
         return {
             id: this.props.id,
@@ -65,6 +68,7 @@ class Expense {
             categoryId: this.props.categoryId,
             createdAt: this.props.createdAt,
             updatedAt: this.props.updatedAt,
+            items: this.items.map((item) => item.toJSON()),
         };
     }
 }

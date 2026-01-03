@@ -35,7 +35,11 @@ let PrismaExpenseRepository = class PrismaExpenseRepository {
                     include: {
                         item: {
                             include: {
-                                category: true,
+                                item: {
+                                    include: {
+                                        category: true,
+                                    },
+                                },
                             },
                         },
                     },
@@ -55,7 +59,11 @@ let PrismaExpenseRepository = class PrismaExpenseRepository {
                     include: {
                         item: {
                             include: {
-                                category: true,
+                                item: {
+                                    include: {
+                                        category: true,
+                                    },
+                                },
                             },
                         },
                     },
@@ -75,7 +83,11 @@ let PrismaExpenseRepository = class PrismaExpenseRepository {
                     include: {
                         item: {
                             include: {
-                                category: true,
+                                item: {
+                                    include: {
+                                        category: true,
+                                    },
+                                },
                             },
                         },
                     },
@@ -97,7 +109,11 @@ let PrismaExpenseRepository = class PrismaExpenseRepository {
                         include: {
                             item: {
                                 include: {
-                                    category: true,
+                                    item: {
+                                        include: {
+                                            category: true,
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -133,7 +149,11 @@ let PrismaExpenseRepository = class PrismaExpenseRepository {
                     include: {
                         item: {
                             include: {
-                                category: true,
+                                item: {
+                                    include: {
+                                        category: true,
+                                    },
+                                },
                             },
                         },
                     },

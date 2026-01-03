@@ -1,0 +1,54 @@
+import { Module, forwardRef } from '@nestjs/common';
+import { PrismaModule } from '../../../common/prisma/prisma.module';
+import { NotificationModule } from '../../notification/notification.module';
+import { PrismaFamilyRepository } from './infrastructure/repositories/prisma-family.repository';
+import { PrismaFamilyInvitationRepository } from './infrastructure/repositories/prisma-family-invitation.repository';
+import { CreateFamilyUseCase } from './application/use-cases/create-family.use-case';
+import { InviteMemberUseCase } from './application/use-cases/invite-member.use-case';
+import { AcceptInvitationUseCase } from './application/use-cases/accept-invitation.use-case';
+import { DeclineInvitationUseCase } from './application/use-cases/decline-invitation.use-case';
+import { LeaveFamilyUseCase } from './application/use-cases/leave-family.use-case';
+import { GetFamiliesUseCase } from './application/use-cases/get-families.use-case';
+import { GetPendingInvitationsUseCase } from './application/use-cases/get-pending-invitations.use-case';
+import { GetFamilyWithMembersUseCase } from './application/use-cases/get-family-with-members.use-case';
+import { RemoveFamilyMemberUseCase } from './application/use-cases/remove-family-member.use-case';
+import { FamilyBalanceService } from './application/services/family-balance.service';
+
+@Module({
+  imports: [PrismaModule, forwardRef(() => NotificationModule)],
+  providers: [
+    {
+      provide: 'FamilyRepository',
+      useClass: PrismaFamilyRepository,
+    },
+    {
+      provide: 'FamilyInvitationRepository',
+      useClass: PrismaFamilyInvitationRepository,
+    },
+    CreateFamilyUseCase,
+    InviteMemberUseCase,
+    AcceptInvitationUseCase,
+    DeclineInvitationUseCase,
+    LeaveFamilyUseCase,
+    GetFamiliesUseCase,
+    GetPendingInvitationsUseCase,
+    GetFamilyWithMembersUseCase,
+    RemoveFamilyMemberUseCase,
+    FamilyBalanceService,
+  ],
+  exports: [
+    'FamilyRepository',
+    'FamilyInvitationRepository',
+    CreateFamilyUseCase,
+    InviteMemberUseCase,
+    AcceptInvitationUseCase,
+    DeclineInvitationUseCase,
+    LeaveFamilyUseCase,
+    GetFamiliesUseCase,
+    GetPendingInvitationsUseCase,
+    GetFamilyWithMembersUseCase,
+    RemoveFamilyMemberUseCase,
+    FamilyBalanceService,
+  ],
+})
+export class FamilyCoreModule {}

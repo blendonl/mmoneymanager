@@ -45,9 +45,9 @@ let CreateExpenseUseCase = class CreateExpenseUseCase {
         const totalValue = dto.items.reduce((sum, item) => {
             const itemPrice = item.itemPrice;
             const discount = item.discount ?? 0;
-            return sum + (itemPrice - discount);
+            return sum + (itemPrice * (item.quantity ?? 1) - discount);
         }, 0);
-        const transaction = await this.transactionService.create(new create_transaction_dto_1.CreateTransactionDto(dto.userId, transaction_type_vo_1.TransactionType.EXPENSE, totalValue));
+        const transaction = await this.transactionService.create(new create_transaction_dto_1.CreateTransactionDto(dto.userId, transaction_type_vo_1.TransactionType.EXPENSE, totalValue, dto.recordedAt, dto.familyId));
         const expenseId = (0, uuid_1.v4)();
         const expense = await this.expenseRepository.create({
             id: expenseId,
@@ -61,6 +61,7 @@ let CreateExpenseUseCase = class CreateExpenseUseCase {
             itemName: item.itemName,
             itemPrice: item.itemPrice,
             discount: item.discount,
+            quantity: item.quantity,
         }), store.id)));
         return this.expenseRepository.findById(expense.id);
     }
@@ -87,8 +88,7 @@ let CreateExpenseUseCase = class CreateExpenseUseCase {
             if (item.discount !== undefined && item.discount < 0) {
                 throw new common_1.BadRequestException('Item discount must be non-negative');
             }
-            if (item.discount !== undefined &&
-                item.discount > item.itemPrice) {
+            if (item.discount !== undefined && item.discount > item.itemPrice) {
                 throw new common_1.BadRequestException('Item discount cannot exceed price');
             }
         }

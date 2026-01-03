@@ -1,0 +1,86 @@
+enum FamilyMemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+
+  @@map("family_member_role")
+}
+
+enum FamilyInvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+
+  @@map("family_invitation_status")
+}
+
+model Family {
+  id   String @id @default(uuid())
+  name String
+
+  // Cached balance for performance
+  balance Decimal @default(0)
+
+  members       FamilyMember[]
+  invitations   FamilyInvitation[]
+  transactions  Transaction[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("family")
+}
+
+model FamilyMember {
+  id       String @id @default(uuid())
+  familyId String @map("family_id")
+  userId   String @map("user_id")
+
+  role FamilyMemberRole @default(MEMBER)
+
+  // Individual balance within this family
+  balance Decimal @default(0)
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  joinedAt  DateTime @default(now()) @map("joined_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([familyId, userId])
+  @@index([userId])
+  @@index([familyId])
+  @@map("family_member")
+}
+
+model FamilyInvitation {
+  id       String @id @default(uuid())
+  familyId String @map("family_id")
+
+  // Inviter (family member sending the invite)
+  inviterId String @map("inviter_id")
+
+  // Invitee (identified by email, linked to userId when they accept)
+  inviteeId    String? @map("invitee_id")
+  inviteeEmail String  @map("invitee_email")
+
+  status FamilyInvitationStatus @default(PENDING)
+
+  // Expiration for pending invitations (7 days default)
+  expiresAt DateTime @map("expires_at")
+
+  family  Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  inviter User   @relation(name: "sent_invitations", fields: [inviterId], references: [id], onDelete: Cascade)
+  invitee User?  @relation(name: "received_invitations", fields: [inviteeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([familyId])
+  @@index([inviteeEmail])
+  @@index([inviteeId])
+  @@map("family_invitation")
+}

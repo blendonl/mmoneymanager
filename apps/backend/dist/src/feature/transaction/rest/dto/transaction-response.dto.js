@@ -6,6 +6,7 @@ class TransactionResponseDto {
     userId;
     type;
     value;
+    recordedAt;
     createdAt;
     updatedAt;
     constructor(transaction) {
@@ -13,6 +14,7 @@ class TransactionResponseDto {
         this.userId = transaction.userId;
         this.type = transaction.type;
         this.value = transaction.value.toNumber();
+        this.recordedAt = transaction.recordedAt;
         this.createdAt = transaction.createdAt;
         this.updatedAt = transaction.updatedAt;
     }

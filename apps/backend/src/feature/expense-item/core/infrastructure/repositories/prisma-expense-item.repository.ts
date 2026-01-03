@@ -11,7 +11,7 @@ import { Decimal } from 'prisma/generated/prisma/internal/prismaNamespace';
 
 @Injectable()
 export class PrismaExpenseItemRepository implements IExpenseItemRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(data: Partial<ExpenseItem>): Promise<ExpenseItem> {
     const item = await this.prisma.expenseItem.create({
@@ -20,9 +20,10 @@ export class PrismaExpenseItemRepository implements IExpenseItemRepository {
         expenseId: data.expenseId!,
         price: new Decimal(data.price?.toString() || '0'),
         discount: new Decimal(data.discount?.toString() || '0'),
+        quantity: data.quantity || 1,
       },
       include: {
-        item: { include: { category: true } },
+        item: { include: { item: { include: { category: true } } } },
         expense: true,
       },
     });
@@ -34,7 +35,7 @@ export class PrismaExpenseItemRepository implements IExpenseItemRepository {
     const item = await this.prisma.expenseItem.findUnique({
       where: { id },
       include: {
-        item: { include: { category: true } },
+        item: { include: { item: { include: { category: true } } } },
         expense: true,
       },
     });
@@ -46,7 +47,7 @@ export class PrismaExpenseItemRepository implements IExpenseItemRepository {
     const items = await this.prisma.expenseItem.findMany({
       where: { expenseId },
       include: {
-        item: { include: { category: true } },
+        item: { include: { item: { include: { category: true } } } },
         expense: true,
       },
       orderBy: { createdAt: 'asc' },
@@ -61,7 +62,7 @@ export class PrismaExpenseItemRepository implements IExpenseItemRepository {
     const [items, total] = await Promise.all([
       this.prisma.expenseItem.findMany({
         include: {
-          item: { include: { category: true } },
+          item: { include: { item: { include: { category: true } } } },
           expense: true,
         },
         orderBy: { createdAt: 'desc' },
@@ -96,7 +97,7 @@ export class PrismaExpenseItemRepository implements IExpenseItemRepository {
       where: { id },
       data: updateData,
       include: {
-        item: { include: { category: true } },
+        item: { include: { item: { include: { category: true } } } },
         expense: true,
       },
     });
@@ -122,11 +123,12 @@ export class PrismaExpenseItemRepository implements IExpenseItemRepository {
       select: {
         price: true,
         discount: true,
+        quantity: true,
       },
     });
 
     const total = items.reduce((sum, item) => {
-      const finalPrice = item.price.minus(item.discount);
+      const finalPrice = item.price.minus(item.discount).times(item.quantity);
       return sum + finalPrice.toNumber();
     }, 0);
 

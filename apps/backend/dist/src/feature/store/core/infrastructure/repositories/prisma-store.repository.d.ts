@@ -8,6 +8,7 @@ export declare class PrismaStoreRepository implements IStoreRepository {
     create(data: Partial<Store>): Promise<Store>;
     findById(id: string): Promise<Store | null>;
     findByNameAndLocation(name: string, location: string): Promise<Store | null>;
+    findBySimilarName(name: string): Promise<Store | null>;
     findAll(filters?: {
         search?: string;
     }, pagination?: Pagination): Promise<PaginatedResult<Store>>;

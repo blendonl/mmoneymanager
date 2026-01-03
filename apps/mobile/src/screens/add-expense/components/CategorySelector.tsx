@@ -1,14 +1,7 @@
 import React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  StyleSheet,
-} from "react-native";
-import { Category } from "../types";
-import { Input, Chip } from "../../../components/design-system";
+import { View, Text, StyleSheet } from "react-native";
+import { Category } from "../../../features/expenses/types";
+import { Input, Chip, Dropdown, DropdownItem } from "../../../components/design-system";
 import { useAppTheme } from "../../../theme";
 
 interface CategorySelectorProps {
@@ -42,6 +35,18 @@ export function CategorySelector({
   );
   const showCreateOption = categoryInput.trim() !== "" && !hasExactMatch;
 
+  const dropdownItems: DropdownItem[] = filteredCategories.map((cat) => ({
+    id: cat.id,
+    label: cat.name,
+  }));
+
+  const handleDropdownSelect = (item: DropdownItem) => {
+    const category = filteredCategories.find((cat) => cat.id === item.id);
+    if (category) {
+      onCategorySelect(category);
+    }
+  };
+
   return (
     <View style={styles.section}>
       <Text
@@ -73,92 +78,16 @@ export function CategorySelector({
         />
       )}
 
-      {showDropdown &&
-        (categoryInput.trim() !== "" || filteredCategories.length > 0) && (
-          <View
-            style={[
-              styles.dropdown,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.custom.colors.border,
-              },
-            ]}
-          >
-            {loading ? (
-              <ActivityIndicator
-                size="small"
-                color={theme.colors.primary}
-                style={styles.dropdownLoader}
-              />
-            ) : (
-              <>
-                {filteredCategories.length > 0 ? (
-                  <FlatList
-                    data={filteredCategories}
-                    keyExtractor={(item) => item.id}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={[
-                          styles.dropdownItem,
-                          { borderBottomColor: theme.custom.colors.divider },
-                        ]}
-                        onPress={() => onCategorySelect(item)}
-                      >
-                        <Text
-                          style={[
-                            styles.dropdownItemText,
-                            theme.custom.typography.body,
-                            { color: theme.custom.colors.text },
-                          ]}
-                        >
-                          {item.name}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                    style={styles.dropdownList}
-                    nestedScrollEnabled
-                  />
-                ) : (
-                  categoryInput.trim() !== "" && (
-                    <Text
-                      style={[
-                        styles.noResultsText,
-                        theme.custom.typography.body,
-                        { color: theme.custom.colors.textSecondary },
-                      ]}
-                    >
-                      No matching categories
-                    </Text>
-                  )
-                )}
-
-                {showCreateOption && (
-                  <TouchableOpacity
-                    style={[
-                      styles.dropdownItem,
-                      styles.createOption,
-                      {
-                        backgroundColor: theme.custom.colors.surfaceVariant,
-                        borderTopColor: theme.colors.primary,
-                      },
-                    ]}
-                    onPress={onCreateNew}
-                  >
-                    <Text
-                      style={[
-                        styles.createOptionText,
-                        theme.custom.typography.bodyMedium,
-                        { color: theme.colors.primary },
-                      ]}
-                    >
-                      + Create new category: "{categoryInput}"
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              </>
-            )}
-          </View>
-        )}
+      <Dropdown
+        items={dropdownItems}
+        visible={showDropdown && (categoryInput.trim() !== "" || filteredCategories.length > 0)}
+        loading={loading}
+        onSelect={handleDropdownSelect}
+        onCreate={onCreateNew}
+        createLabel={`+ Create new category: "${categoryInput}"`}
+        showCreateOption={showCreateOption}
+        emptyMessage="No matching categories"
+      />
     </View>
   );
 }
@@ -176,35 +105,4 @@ const styles = StyleSheet.create({
   selectedChip: {
     alignSelf: 'flex-start',
   },
-  dropdown: {
-    borderWidth: 1,
-    borderRadius: 8,
-    marginTop: 8,
-    maxHeight: 200,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  dropdownLoader: {
-    padding: 16,
-  },
-  dropdownList: {
-    maxHeight: 200,
-  },
-  dropdownItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-  },
-  dropdownItemText: {},
-  noResultsText: {
-    padding: 16,
-    textAlign: 'center',
-  },
-  createOption: {
-    borderTopWidth: 2,
-    borderBottomWidth: 0,
-  },
-  createOptionText: {},
 });

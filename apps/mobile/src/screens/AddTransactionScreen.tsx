@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { SegmentedButtons } from 'react-native-paper';
+import { ToggleSwitch } from '../components/design-system';
 import { useAppTheme } from '../theme';
 import AddExpenseScreen from './AddExpenseScreen';
 import AddIncomeScreen from './AddIncomeScreen';
@@ -12,25 +12,26 @@ export default function AddTransactionScreen({ navigation, route }: any) {
     const initialType = route?.params?.initialType || 'EXPENSE';
     const [transactionType, setTransactionType] = useState<TransactionType>(initialType);
 
+    const toggleOptions = [
+        {
+            value: 'EXPENSE',
+            label: 'Expense',
+            icon: 'minus-circle',
+        },
+        {
+            value: 'INCOME',
+            label: 'Income',
+            icon: 'plus-circle',
+        },
+    ];
+
     return (
-        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-            <View style={styles.segmentedButtonsContainer}>
-                <SegmentedButtons
+        <View style={[styles.container, { backgroundColor: theme.custom.colors.background }]}>
+            <View style={styles.toggleContainer}>
+                <ToggleSwitch
+                    options={toggleOptions}
                     value={transactionType}
-                    onValueChange={(value) => setTransactionType(value as TransactionType)}
-                    buttons={[
-                        {
-                            value: 'EXPENSE',
-                            label: 'Expense',
-                            icon: 'minus-circle',
-                        },
-                        {
-                            value: 'INCOME',
-                            label: 'Income',
-                            icon: 'plus-circle',
-                        },
-                    ]}
-                    style={styles.segmentedButtons}
+                    onChange={(value) => setTransactionType(value as TransactionType)}
                 />
             </View>
 
@@ -47,9 +48,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    segmentedButtonsContainer: {
+    toggleContainer: {
         padding: 16,
         paddingBottom: 8,
     },
-    segmentedButtons: {},
 });

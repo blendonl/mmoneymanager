@@ -1,0 +1,125 @@
+enum NotificationType {
+  FAMILY_INVITATION_SENT
+  FAMILY_INVITATION_RECEIVED
+  FAMILY_INVITATION_ACCEPTED
+  FAMILY_INVITATION_DECLINED
+  FAMILY_MEMBER_JOINED
+  FAMILY_MEMBER_LEFT
+  FAMILY_TRANSACTION_CREATED
+  TRANSACTION_MILESTONE_BUDGET_ALERT
+  TRANSACTION_MILESTONE_SPENDING_LIMIT
+  RECEIPT_PROCESSING_COMPLETE
+
+  @@map("notification_type")
+}
+
+enum NotificationDeliveryMethod {
+  PUSH
+  IN_APP
+  TOAST
+
+  @@map("notification_delivery_method")
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+
+  @@map("notification_priority")
+}
+
+model Notification {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  type     NotificationType
+  priority NotificationPriority @default(MEDIUM)
+
+  // Notification content
+  title   String
+  message String
+  data    Json? // Additional metadata (familyId, transactionId, etc.)
+
+  // Delivery tracking
+  deliveryMethods NotificationDeliveryMethod[]
+
+  // Read/interaction status
+  isRead        Boolean   @default(false) @map("is_read")
+  readAt        DateTime? @map("read_at")
+  isInteracted  Boolean   @default(false) @map("is_interacted")
+  interactedAt  DateTime? @map("interacted_at")
+
+  // Deep linking
+  actionUrl String? @map("action_url") // e.g., "family/invitations/123"
+
+  // Related entities (optional foreign keys for filtering)
+  familyId      String? @map("family_id")
+  transactionId String? @map("transaction_id")
+  invitationId  String? @map("invitation_id")
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  family      Family?      @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  transaction Transaction? @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([userId, isRead])
+  @@index([familyId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("notification")
+}
+
+model NotificationPreference {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+
+  // Global settings
+  enablePushNotifications  Boolean @default(true) @map("enable_push_notifications")
+  enableInAppNotifications Boolean @default(true) @map("enable_in_app_notifications")
+  enableToastNotifications Boolean @default(true) @map("enable_toast_notifications")
+
+  // Quiet hours
+  quietHoursEnabled Boolean   @default(false) @map("quiet_hours_enabled")
+  quietHoursStart   DateTime? @map("quiet_hours_start") // Store as time only
+  quietHoursEnd     DateTime? @map("quiet_hours_end")   // Store as time only
+
+  // Per-type preferences (stored as JSON for flexibility)
+  typePreferences Json @default("{}") @map("type_preferences")
+  // Structure: { "FAMILY_INVITATION_RECEIVED": { "push": true, "inApp": true, "toast": true }, ... }
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("notification_preference")
+}
+
+model DeviceToken {
+  id     String @id @default(uuid())
+  userId String @map("user_id")
+
+  // Expo Push Token
+  expoPushToken String  @unique @map("expo_push_token")
+  platform      String? // "ios" | "android" | "web"
+  deviceId      String? @map("device_id") // Unique device identifier
+  deviceName    String? @map("device_name") // e.g., "John's iPhone"
+
+  // Token validity
+  isActive Boolean  @default(true) @map("is_active")
+  lastUsed DateTime @default(now()) @map("last_used")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([expoPushToken])
+  @@map("device_token")
+}

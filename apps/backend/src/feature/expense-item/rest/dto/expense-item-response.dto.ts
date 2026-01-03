@@ -3,12 +3,14 @@ import { ExpenseItem } from '../../core/domain/entities/expense-item.entity';
 export class ExpenseItemResponseDto {
   id: string;
   itemId: string;
+  name: string;
   expenseId: string;
   categoryId: string;
   price: number;
   discount: number;
   finalPrice: number;
   discountPercentage: number;
+  quantity: number;
   createdAt: Date;
   updatedAt: Date;
 
@@ -16,6 +18,7 @@ export class ExpenseItemResponseDto {
     const dto = new ExpenseItemResponseDto();
     dto.id = item.id;
     dto.itemId = item.itemId;
+    dto.name = item.itemName;
     dto.expenseId = item.expenseId;
     dto.categoryId = item.categoryId;
     dto.price = item.price.toNumber();
@@ -24,6 +27,7 @@ export class ExpenseItemResponseDto {
     dto.discountPercentage = item.getDiscountPercentage();
     dto.createdAt = item.createdAt;
     dto.updatedAt = item.updatedAt;
+    dto.quantity = item.quantity;
     return dto;
   }
 

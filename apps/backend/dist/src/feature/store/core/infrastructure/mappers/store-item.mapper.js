@@ -2,24 +2,27 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreItemMapper = void 0;
 const store_item_entity_1 = require("../../domain/entities/store-item.entity");
+const item_mapper_1 = require("../../../../item/core/infrastructure/mappers/item.mapper");
 class StoreItemMapper {
     static toDomain(prismaStoreItem) {
         return new store_item_entity_1.StoreItem({
             id: prismaStoreItem.id,
             storeId: prismaStoreItem.storeId,
-            name: prismaStoreItem.name,
+            itemId: prismaStoreItem.itemId,
             price: prismaStoreItem.price,
             isDiscounted: prismaStoreItem.isDiscounted,
-            categoryId: prismaStoreItem.categoryId,
             createdAt: prismaStoreItem.createdAt,
             updatedAt: prismaStoreItem.updatedAt,
+            item: prismaStoreItem.item
+                ? item_mapper_1.ItemMapper.toDomain(prismaStoreItem.item)
+                : undefined,
         });
     }
     static toPersistence(storeItem) {
         return {
             id: storeItem.id,
             storeId: storeItem.storeId,
-            name: storeItem.name,
+            itemId: storeItem.itemId,
             price: storeItem.price,
             isDiscounted: storeItem.isDiscounted,
             createdAt: storeItem.createdAt,

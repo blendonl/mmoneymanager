@@ -34,7 +34,7 @@ let CreateExpenseItemUseCase = class CreateExpenseItemUseCase {
             itemId = existingItem.id;
         }
         else {
-            const storeItem = await this.storeItemService.createOrFind(new create_store_item_dto_1.CreateStoreItemDto(storeId, dto.itemName, dto.itemPrice));
+            const storeItem = await this.storeItemService.createOrFind(new create_store_item_dto_1.CreateStoreItemDto(storeId, dto.itemName, dto.itemPrice, dto.categoryId));
             itemId = storeItem.id;
         }
         const expenseItem = await this.expenseItemRepository.create({
@@ -43,28 +43,11 @@ let CreateExpenseItemUseCase = class CreateExpenseItemUseCase {
             categoryId: dto.categoryId,
             price: new prismaNamespace_1.Decimal(dto.itemPrice),
             discount: new prismaNamespace_1.Decimal(dto.discount ?? 0),
+            quantity: dto.quantity ?? 1,
         });
         return expenseItem;
     }
     async validate(dto) {
-        if (!dto.expenseId || dto.expenseId.trim() === '') {
-            throw new common_1.BadRequestException('Expense ID is required');
-        }
-        if (!dto.categoryId || dto.categoryId.trim() === '') {
-            throw new common_1.BadRequestException('Category ID is required');
-        }
-        if (!dto.itemName || dto.itemName.trim() === '') {
-            throw new common_1.BadRequestException('Item name is required');
-        }
-        if (dto.itemPrice < 0) {
-            throw new common_1.BadRequestException('Item price must be non-negative');
-        }
-        if (dto.discount !== undefined && dto.discount < 0) {
-            throw new common_1.BadRequestException('Discount must be non-negative');
-        }
-        if (dto.discount !== undefined && dto.discount > dto.itemPrice) {
-            throw new common_1.BadRequestException('Discount cannot exceed price');
-        }
         const category = await this.storeItemCategoryRepository.findById(dto.categoryId);
         if (!category) {
             throw new common_1.NotFoundException('Store item category not found');

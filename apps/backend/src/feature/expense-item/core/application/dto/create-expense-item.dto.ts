@@ -4,6 +4,7 @@ export class CreateExpenseItemDto {
   itemName: string;
   itemPrice: number;
   discount?: number;
+  quantity?: number;
   itemId?: string;
 
   constructor(data: {
@@ -12,6 +13,7 @@ export class CreateExpenseItemDto {
     itemName: string;
     itemPrice: number;
     discount?: number;
+    quantity?: number;
     itemId?: string;
   }) {
     this.expenseId = data.expenseId;
@@ -19,6 +21,7 @@ export class CreateExpenseItemDto {
     this.itemName = data.itemName;
     this.itemPrice = data.itemPrice;
     this.discount = data.discount ?? 0;
+    this.quantity = data.quantity ?? 1;
     this.itemId = data.itemId;
   }
 }

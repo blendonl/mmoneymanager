@@ -25,6 +25,26 @@ services:
   #    context: .
   #    dockerfile: Dockerfile
 
+  paddleocr:
+    build:
+      context: ./docker/paddleocr-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - paddleocr-models:/root/.paddleocr
+    environment:
+      - LANGUAGES=sq,en
+      - USE_GPU=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    shm_size: 2G
+    restart: unless-stopped
+
 volumes:
   postgres-data:
+  paddleocr-models:
 

@@ -19,7 +19,7 @@ let PrismaStoreItemCategoryRepository = class PrismaStoreItemCategoryRepository 
         this.prisma = prisma;
     }
     async create(data) {
-        const category = await this.prisma.storeItemCategory.create({
+        const category = await this.prisma.itemCategory.create({
             data: {
                 name: data.name,
                 parentId: data.parentId ?? null,
@@ -28,19 +28,19 @@ let PrismaStoreItemCategoryRepository = class PrismaStoreItemCategoryRepository 
         return store_item_category_mapper_1.StoreItemCategoryMapper.toDomain(category);
     }
     async findById(id) {
-        const category = await this.prisma.storeItemCategory.findUnique({
+        const category = await this.prisma.itemCategory.findUnique({
             where: { id },
         });
         return category ? store_item_category_mapper_1.StoreItemCategoryMapper.toDomain(category) : null;
     }
     async findAll(pagination) {
         const [categories, total] = await Promise.all([
-            this.prisma.storeItemCategory.findMany({
+            this.prisma.itemCategory.findMany({
                 orderBy: { name: 'asc' },
                 skip: pagination?.skip,
                 take: pagination?.take,
             }),
-            this.prisma.storeItemCategory.count(),
+            this.prisma.itemCategory.count(),
         ]);
         return {
             data: categories.map(store_item_category_mapper_1.StoreItemCategoryMapper.toDomain),
@@ -49,13 +49,13 @@ let PrismaStoreItemCategoryRepository = class PrismaStoreItemCategoryRepository 
     }
     async findByParentId(parentId, pagination) {
         const [categories, total] = await Promise.all([
-            this.prisma.storeItemCategory.findMany({
+            this.prisma.itemCategory.findMany({
                 where: { parentId },
                 orderBy: { name: 'asc' },
                 skip: pagination?.skip,
                 take: pagination?.take,
             }),
-            this.prisma.storeItemCategory.count({ where: { parentId } }),
+            this.prisma.itemCategory.count({ where: { parentId } }),
         ]);
         return {
             data: categories.map(store_item_category_mapper_1.StoreItemCategoryMapper.toDomain),
@@ -63,7 +63,7 @@ let PrismaStoreItemCategoryRepository = class PrismaStoreItemCategoryRepository 
         };
     }
     async findChildren(parentId) {
-        const categories = await this.prisma.storeItemCategory.findMany({
+        const categories = await this.prisma.itemCategory.findMany({
             where: { parentId },
             orderBy: { name: 'asc' },
         });
@@ -77,14 +77,14 @@ let PrismaStoreItemCategoryRepository = class PrismaStoreItemCategoryRepository 
         if (data.parentId !== undefined) {
             updateData.parentId = data.parentId;
         }
-        const category = await this.prisma.storeItemCategory.update({
+        const category = await this.prisma.itemCategory.update({
             where: { id },
             data: updateData,
         });
         return store_item_category_mapper_1.StoreItemCategoryMapper.toDomain(category);
     }
     async delete(id) {
-        await this.prisma.storeItemCategory.delete({
+        await this.prisma.itemCategory.delete({
             where: { id },
         });
     }

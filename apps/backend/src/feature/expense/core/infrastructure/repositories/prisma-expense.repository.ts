@@ -32,7 +32,11 @@ export class PrismaExpenseRepository implements IExpenseRepository {
           include: {
             item: {
               include: {
-                category: true,
+                item: {
+                  include: {
+                    category: true,
+                  },
+                },
               },
             },
           },
@@ -54,7 +58,11 @@ export class PrismaExpenseRepository implements IExpenseRepository {
           include: {
             item: {
               include: {
-                category: true,
+                item: {
+                  include: {
+                    category: true,
+                  },
+                },
               },
             },
           },
@@ -76,7 +84,11 @@ export class PrismaExpenseRepository implements IExpenseRepository {
           include: {
             item: {
               include: {
-                category: true,
+                item: {
+                  include: {
+                    category: true,
+                  },
+                },
               },
             },
           },
@@ -104,7 +116,11 @@ export class PrismaExpenseRepository implements IExpenseRepository {
             include: {
               item: {
                 include: {
-                  category: true,
+                  item: {
+                    include: {
+                      category: true,
+                    },
+                  },
                 },
               },
             },
@@ -145,7 +161,11 @@ export class PrismaExpenseRepository implements IExpenseRepository {
           include: {
             item: {
               include: {
-                category: true,
+                item: {
+                  include: {
+                    category: true,
+                  },
+                },
               },
             },
           },

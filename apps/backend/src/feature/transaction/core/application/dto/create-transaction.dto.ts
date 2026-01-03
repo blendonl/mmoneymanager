@@ -4,10 +4,14 @@ export class CreateTransactionDto {
   userId: string;
   type: TransactionType;
   value: number;
+  familyId?: string;
+  recordedAt?: Date;
 
-  constructor(userId: string, type: TransactionType, value: number) {
+  constructor(userId: string, type: TransactionType, value: number, recordedAt?: Date, familyId?: string) {
     this.userId = userId;
     this.type = type;
     this.value = value;
+    this.recordedAt = recordedAt;
+    this.familyId = familyId;
   }
 }

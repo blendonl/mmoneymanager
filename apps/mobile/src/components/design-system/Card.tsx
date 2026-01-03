@@ -2,12 +2,14 @@ import React from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
 import { Card as PaperCard } from 'react-native-paper';
 import { useAppTheme } from '../../theme';
+import { GlassCard } from '../auth/GlassCard';
 
 interface CardProps {
   children: React.ReactNode;
   onPress?: () => void;
   style?: ViewStyle;
   elevation?: number;
+  glass?: boolean;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -15,8 +17,17 @@ export const Card: React.FC<CardProps> = ({
   onPress,
   style,
   elevation = 1,
+  glass = false,
 }) => {
   const { theme } = useAppTheme();
+
+  if (glass) {
+    return (
+      <GlassCard style={style}>
+        {children}
+      </GlassCard>
+    );
+  }
 
   if (onPress) {
     return (

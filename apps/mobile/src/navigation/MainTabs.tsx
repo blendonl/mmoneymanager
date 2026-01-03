@@ -1,35 +1,45 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, Text, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import TransactionsListScreen from '../screens/transactions/TransactionsListScreen';
 import AnalyticsScreen from '../screens/analytics/AnalyticsScreen';
+import FamilyListScreen from '../screens/family/FamilyListScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
+import NotificationsScreen from '../screens/notifications/NotificationsScreen';
+import { useAppTheme } from '../theme';
+import { useNotifications } from '../context/NotificationContext';
+import { GlassTabBar } from '../components/navigation/GlassTabBar';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainTabs() {
+    const { theme } = useAppTheme();
+    const { unreadCount } = useNotifications();
+
     return (
         <Tab.Navigator
+            tabBar={(props) => <GlassTabBar {...props} />}
             screenOptions={{
-                headerShown: true,
-                tabBarStyle: {
-                    height: 65,
-                    paddingBottom: 10,
-                },
+                headerShown: false,
                 tabBarLabelStyle: {
-                    fontSize: 11,
+                    fontSize: 12,
+                    fontWeight: '500',
+                    letterSpacing: 0.3,
+                    marginTop: 4,
                 },
-                tabBarActiveTintColor: '#6200EE',
-                tabBarInactiveTintColor: '#666',
+                tabBarIconStyle: {
+                    marginBottom: 0,
+                },
+                tabBarActiveTintColor: theme.colors.primary,
+                tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
             }}
         >
             <Tab.Screen
                 name="Transactions"
                 component={TransactionsListScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="format-list-bulleted" size={size} color={color} />
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons name="format-list-bulleted" size={26} color={color} />
                     ),
                 }}
             />
@@ -37,60 +47,55 @@ export default function MainTabs() {
                 name="Analytics"
                 component={AnalyticsScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="chart-box" size={size} color={color} />
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons
+                            name={focused ? 'chart-box' : 'chart-box-outline'}
+                            size={26}
+                            color={color}
+                        />
                     ),
                 }}
             />
             <Tab.Screen
-                name="Add"
-                component={EmptyComponent}
-                listeners={({ navigation }) => ({
-                    tabPress: (e) => {
-                        e.preventDefault();
-                        navigation.getParent()?.navigate('AddTransaction');
-                    },
-                })}
+                name="Family"
+                component={FamilyListScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <View style={styles.addButton}>
-                            <Text style={styles.plus}>+</Text>
-                        </View>
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons
+                            name={focused ? 'account-group' : 'account-group-outline'}
+                            size={26}
+                            color={color}
+                        />
                     ),
-                    tabBarShowLabel: false,
+                }}
+            />
+            <Tab.Screen
+                name="Notifications"
+                component={NotificationsScreen}
+                options={{
+                    tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons
+                            name={focused ? 'bell' : 'bell-outline'}
+                            size={26}
+                            color={color}
+                        />
+                    ),
                 }}
             />
             <Tab.Screen
                 name="Profile"
                 component={ProfileScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="account" size={size} color={color} />
+                    tabBarIcon: ({ focused, color }) => (
+                        <MaterialCommunityIcons
+                            name={focused ? 'account' : 'account-outline'}
+                            size={26}
+                            color={color}
+                        />
                     ),
                 }}
             />
         </Tab.Navigator>
     );
 }
-
-// Empty component for the Add tab (never actually rendered)
-function EmptyComponent() {
-    return null;
-}
-
-const styles = StyleSheet.create({
-    addButton: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: '#007AFF',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    plus: {
-        color: 'white',
-        fontSize: 30,
-        lineHeight: 32,
-    },
-});

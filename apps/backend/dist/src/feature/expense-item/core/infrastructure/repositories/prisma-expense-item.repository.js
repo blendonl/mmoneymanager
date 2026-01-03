@@ -26,9 +26,10 @@ let PrismaExpenseItemRepository = class PrismaExpenseItemRepository {
                 expenseId: data.expenseId,
                 price: new prismaNamespace_1.Decimal(data.price?.toString() || '0'),
                 discount: new prismaNamespace_1.Decimal(data.discount?.toString() || '0'),
+                quantity: data.quantity || 1,
             },
             include: {
-                item: { include: { category: true } },
+                item: { include: { item: { include: { category: true } } } },
                 expense: true,
             },
         });
@@ -38,7 +39,7 @@ let PrismaExpenseItemRepository = class PrismaExpenseItemRepository {
         const item = await this.prisma.expenseItem.findUnique({
             where: { id },
             include: {
-                item: { include: { category: true } },
+                item: { include: { item: { include: { category: true } } } },
                 expense: true,
             },
         });
@@ -48,7 +49,7 @@ let PrismaExpenseItemRepository = class PrismaExpenseItemRepository {
         const items = await this.prisma.expenseItem.findMany({
             where: { expenseId },
             include: {
-                item: { include: { category: true } },
+                item: { include: { item: { include: { category: true } } } },
                 expense: true,
             },
             orderBy: { createdAt: 'asc' },
@@ -59,7 +60,7 @@ let PrismaExpenseItemRepository = class PrismaExpenseItemRepository {
         const [items, total] = await Promise.all([
             this.prisma.expenseItem.findMany({
                 include: {
-                    item: { include: { category: true } },
+                    item: { include: { item: { include: { category: true } } } },
                     expense: true,
                 },
                 orderBy: { createdAt: 'desc' },
@@ -88,7 +89,7 @@ let PrismaExpenseItemRepository = class PrismaExpenseItemRepository {
             where: { id },
             data: updateData,
             include: {
-                item: { include: { category: true } },
+                item: { include: { item: { include: { category: true } } } },
                 expense: true,
             },
         });
@@ -110,10 +111,11 @@ let PrismaExpenseItemRepository = class PrismaExpenseItemRepository {
             select: {
                 price: true,
                 discount: true,
+                quantity: true,
             },
         });
         const total = items.reduce((sum, item) => {
-            const finalPrice = item.price.minus(item.discount);
+            const finalPrice = item.price.minus(item.discount).times(item.quantity);
             return sum + finalPrice.toNumber();
         }, 0);
         return total;

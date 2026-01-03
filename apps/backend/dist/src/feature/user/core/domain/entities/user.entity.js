@@ -12,10 +12,6 @@ class User {
             throw new Error('User ID is required');
         if (!props.email?.includes('@'))
             throw new Error('Valid email is required');
-        if (!props.firstName?.trim())
-            throw new Error('First name is required');
-        if (!props.lastName?.trim())
-            throw new Error('Last name is required');
     }
     get id() {
         return this.props.id;
@@ -42,7 +38,12 @@ class User {
         return this.props.updatedAt;
     }
     get fullName() {
-        return `${this.props.firstName} ${this.props.lastName}`;
+        const firstName = this.props.firstName?.trim();
+        const lastName = this.props.lastName?.trim();
+        if (firstName && lastName) {
+            return `${firstName} ${lastName}`;
+        }
+        return firstName || lastName || 'Unknown User';
     }
     toJSON() {
         return { ...this.props };

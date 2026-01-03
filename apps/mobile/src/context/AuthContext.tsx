@@ -1,22 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiClient } from '../api/client';
-
-interface User {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-}
-
-interface AuthContextType {
-    user: User | null;
-    token: string | null;
-    isLoading: boolean;
-    login: (data: any) => Promise<void>;
-    register: (data: any) => Promise<void>;
-    logout: () => Promise<void>;
-}
+import { User, AuthContextType } from '../features/auth/types';
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
@@ -81,8 +66,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await AsyncStorage.removeItem('token');
     };
 
+    const loginWithGoogle = async (data: { token: string; userId: string; email: string }) => {
+        if (data.token) {
+            setToken(data.token);
+            await AsyncStorage.setItem('token', data.token);
+            try {
+                const userData = await apiClient.get('/auth/me');
+                setUser(userData);
+            } catch (e) {
+                console.error('Failed to fetch user data after Google login', e);
+            }
+        }
+    };
+
+    const loginWithApple = async (data: { token: string; userId: string; email: string }) => {
+        if (data.token) {
+            setToken(data.token);
+            await AsyncStorage.setItem('token', data.token);
+            try {
+                const userData = await apiClient.get('/auth/me');
+                setUser(userData);
+            } catch (e) {
+                console.error('Failed to fetch user data after Apple login', e);
+            }
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, loginWithGoogle, loginWithApple }}>
             {children}
         </AuthContext.Provider>
     );

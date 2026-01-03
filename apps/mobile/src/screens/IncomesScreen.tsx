@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Button } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { apiClient } from '../api/client';
-import { useAuth } from '../context/AuthContext';
+import { GlassScreenLayout } from '../components/layout/GlassScreenLayout';
+import { Card } from '../components/design-system/Card';
+import { Button } from '../components/design-system/Button';
 
 export default function IncomesScreen() {
     const [incomes, setIncomes] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { logout } = useAuth();
 
     useEffect(() => {
         fetchIncomes();
@@ -28,84 +30,156 @@ export default function IncomesScreen() {
 
     if (loading) {
         return (
-            <View style={styles.centered}>
-                <ActivityIndicator size="large" />
-            </View>
+            <GlassScreenLayout>
+                <View style={styles.centered}>
+                    <Card glass style={styles.loadingCard}>
+                        <ActivityIndicator size="large" color="#FFFFFF" />
+                        <Text style={styles.loadingText}>Loading incomes...</Text>
+                    </Card>
+                </View>
+            </GlassScreenLayout>
         );
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Incomes</Text>
-                <Button title="Logout" onPress={logout} />
-            </View>
+        <GlassScreenLayout>
+            <Card glass style={styles.headerCard}>
+                <View style={styles.headerContent}>
+                    <MaterialCommunityIcons name="cash-multiple" size={32} color="#FFFFFF" />
+                    <View style={styles.headerText}>
+                        <Text style={styles.headerLabel}>Total Income</Text>
+                        <Text style={styles.headerValue}>
+                            ${incomes.reduce((sum, inc) => sum + (inc.amount || 0), 0).toFixed(2)}
+                        </Text>
+                    </View>
+                </View>
+            </Card>
 
             {error ? (
                 <View style={styles.centered}>
-                    <Text style={styles.error}>{error}</Text>
-                    <Button title="Retry" onPress={fetchIncomes} />
+                    <Card glass style={styles.errorCard}>
+                        <MaterialCommunityIcons name="alert-circle" size={48} color="#ff6b6b" />
+                        <Text style={styles.error}>{error}</Text>
+                        <Button title="Retry" onPress={fetchIncomes} variant="glass" />
+                    </Card>
                 </View>
             ) : (
                 <FlatList
                     data={incomes}
                     keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
                     renderItem={({ item }) => (
-                        <View style={styles.item}>
-                            <Text style={styles.itemText}>{item.description || 'Income'}</Text>
-                            <Text style={styles.itemAmount}>${item.amount}</Text>
-                        </View>
+                        <Card glass style={styles.item}>
+                            <View style={styles.itemContent}>
+                                <View style={styles.itemInfo}>
+                                    <Text style={styles.itemText}>{item.description || 'Income'}</Text>
+                                    <Text style={styles.itemDate}>
+                                        {item.date ? new Date(item.date).toLocaleDateString() : 'No date'}
+                                    </Text>
+                                </View>
+                                <Text style={styles.itemAmount}>+${item.amount}</Text>
+                            </View>
+                        </Card>
                     )}
-                    ListEmptyComponent={<Text style={styles.emptyText}>No incomes found</Text>}
+                    ListEmptyComponent={
+                        <Card glass style={styles.emptyCard}>
+                            <MaterialCommunityIcons name="inbox" size={48} color="rgba(255, 255, 255, 0.5)" />
+                            <Text style={styles.emptyText}>No incomes found</Text>
+                        </Card>
+                    }
+                    contentContainerStyle={styles.listContent}
+                    showsVerticalScrollIndicator={false}
                 />
             )}
-        </View>
+        </GlassScreenLayout>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 16,
-        backgroundColor: '#fff',
-    },
     centered: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    header: {
+    loadingCard: {
+        padding: 32,
+        alignItems: 'center',
+    },
+    loadingText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        marginTop: 16,
+    },
+    headerCard: {
+        marginBottom: 16,
+    },
+    headerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 20,
+    },
+    headerText: {
+        marginLeft: 16,
+        flex: 1,
+    },
+    headerLabel: {
+        fontSize: 14,
+        color: 'rgba(255, 255, 255, 0.7)',
+        marginBottom: 4,
+    },
+    headerValue: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: '#FFFFFF',
+    },
+    errorCard: {
+        padding: 32,
+        alignItems: 'center',
+    },
+    error: {
+        color: '#ff6b6b',
+        fontSize: 16,
+        marginVertical: 16,
+        textAlign: 'center',
+    },
+    listContent: {
+        paddingBottom: 16,
+    },
+    item: {
+        marginBottom: 12,
+    },
+    itemContent: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-    },
-    error: {
-        color: 'red',
-        marginBottom: 10,
-    },
-    item: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         padding: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+    },
+    itemInfo: {
+        flex: 1,
     },
     itemText: {
         fontSize: 16,
+        color: '#FFFFFF',
+        fontWeight: '600',
+        marginBottom: 4,
+    },
+    itemDate: {
+        fontSize: 13,
+        color: 'rgba(255, 255, 255, 0.6)',
     },
     itemAmount: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: 'green',
+        fontSize: 18,
+        fontWeight: '700',
+        color: '#4CAF50',
+    },
+    emptyCard: {
+        padding: 48,
+        alignItems: 'center',
+        marginTop: 32,
     },
     emptyText: {
         textAlign: 'center',
-        marginTop: 20,
-        color: '#666',
+        marginTop: 16,
+        color: 'rgba(255, 255, 255, 0.7)',
+        fontSize: 16,
     },
 });

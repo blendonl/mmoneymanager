@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Avatar, Divider } from 'react-native-paper';
 import { useAppTheme } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
@@ -77,7 +78,7 @@ export default function ProfileScreen({ navigation }: any) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <ScrollView>
         <Card style={styles.profileCard} elevation={2}>
           <View style={styles.profileContent}>
@@ -210,7 +211,7 @@ export default function ProfileScreen({ navigation }: any) {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -250,6 +251,6 @@ const styles = StyleSheet.create({
     borderColor: '#D32F2F',
   },
   bottomPadding: {
-    height: 32,
+    height: 100,
   },
 });

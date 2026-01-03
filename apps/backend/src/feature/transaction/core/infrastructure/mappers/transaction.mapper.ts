@@ -10,6 +10,9 @@ export class TransactionMapper {
       userId: prismaTransaction.userId,
       type: prismaTransaction.type as TransactionType,
       value: prismaTransaction.value as Decimal,
+      familyId: prismaTransaction.familyId ?? undefined,
+      scope: prismaTransaction.scope as any,
+      recordedAt: prismaTransaction.recordedAt,
       createdAt: prismaTransaction.createdAt,
       updatedAt: prismaTransaction.updatedAt,
     });
@@ -21,6 +24,9 @@ export class TransactionMapper {
       userId: transaction.userId,
       type: transaction.type,
       value: transaction.value,
+      familyId: transaction.familyId ?? null,
+      scope: transaction.scope,
+      recordedAt: transaction.recordedAt,
       createdAt: transaction.createdAt,
       updatedAt: transaction.updatedAt,
     };

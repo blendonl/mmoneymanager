@@ -57,13 +57,20 @@ export const ModelName = {
   ExpenseItem: 'ExpenseItem',
   Expense: 'Expense',
   ExpenseCategory: 'ExpenseCategory',
+  Family: 'Family',
+  FamilyMember: 'FamilyMember',
+  FamilyInvitation: 'FamilyInvitation',
   Income: 'Income',
   IncomeCategory: 'IncomeCategory',
+  Notification: 'Notification',
+  NotificationPreference: 'NotificationPreference',
+  DeviceToken: 'DeviceToken',
   User: 'User',
   Store: 'Store',
+  Item: 'Item',
   StoreItem: 'StoreItem',
   StoreItemDiscount: 'StoreItemDiscount',
-  StoreItemCategory: 'StoreItemCategory',
+  ItemCategory: 'ItemCategory',
   Transaction: 'Transaction'
 } as const
 
@@ -131,6 +138,7 @@ export const ExpenseItemScalarFieldEnum = {
   expenseId: 'expenseId',
   price: 'price',
   discount: 'discount',
+  quantity: 'quantity',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -163,6 +171,46 @@ export const ExpenseCategoryScalarFieldEnum = {
 export type ExpenseCategoryScalarFieldEnum = (typeof ExpenseCategoryScalarFieldEnum)[keyof typeof ExpenseCategoryScalarFieldEnum]
 
 
+export const FamilyScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  balance: 'balance',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FamilyScalarFieldEnum = (typeof FamilyScalarFieldEnum)[keyof typeof FamilyScalarFieldEnum]
+
+
+export const FamilyMemberScalarFieldEnum = {
+  id: 'id',
+  familyId: 'familyId',
+  userId: 'userId',
+  role: 'role',
+  balance: 'balance',
+  joinedAt: 'joinedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FamilyMemberScalarFieldEnum = (typeof FamilyMemberScalarFieldEnum)[keyof typeof FamilyMemberScalarFieldEnum]
+
+
+export const FamilyInvitationScalarFieldEnum = {
+  id: 'id',
+  familyId: 'familyId',
+  inviterId: 'inviterId',
+  inviteeId: 'inviteeId',
+  inviteeEmail: 'inviteeEmail',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FamilyInvitationScalarFieldEnum = (typeof FamilyInvitationScalarFieldEnum)[keyof typeof FamilyInvitationScalarFieldEnum]
+
+
 export const IncomeScalarFieldEnum = {
   id: 'id',
   transactionId: 'transactionId',
@@ -184,6 +232,63 @@ export const IncomeCategoryScalarFieldEnum = {
 } as const
 
 export type IncomeCategoryScalarFieldEnum = (typeof IncomeCategoryScalarFieldEnum)[keyof typeof IncomeCategoryScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  priority: 'priority',
+  title: 'title',
+  message: 'message',
+  data: 'data',
+  deliveryMethods: 'deliveryMethods',
+  isRead: 'isRead',
+  readAt: 'readAt',
+  isInteracted: 'isInteracted',
+  interactedAt: 'interactedAt',
+  actionUrl: 'actionUrl',
+  familyId: 'familyId',
+  transactionId: 'transactionId',
+  invitationId: 'invitationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  enablePushNotifications: 'enablePushNotifications',
+  enableInAppNotifications: 'enableInAppNotifications',
+  enableToastNotifications: 'enableToastNotifications',
+  quietHoursEnabled: 'quietHoursEnabled',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
+  typePreferences: 'typePreferences',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
+
+
+export const DeviceTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  expoPushToken: 'expoPushToken',
+  platform: 'platform',
+  deviceId: 'deviceId',
+  deviceName: 'deviceName',
+  isActive: 'isActive',
+  lastUsed: 'lastUsed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DeviceTokenScalarFieldEnum = (typeof DeviceTokenScalarFieldEnum)[keyof typeof DeviceTokenScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -212,11 +317,21 @@ export const StoreScalarFieldEnum = {
 export type StoreScalarFieldEnum = (typeof StoreScalarFieldEnum)[keyof typeof StoreScalarFieldEnum]
 
 
-export const StoreItemScalarFieldEnum = {
+export const ItemScalarFieldEnum = {
   id: 'id',
-  storeId: 'storeId',
   categoryId: 'categoryId',
   name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ItemScalarFieldEnum = (typeof ItemScalarFieldEnum)[keyof typeof ItemScalarFieldEnum]
+
+
+export const StoreItemScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  storeId: 'storeId',
   price: 'price',
   isDiscounted: 'isDiscounted',
   createdAt: 'createdAt',
@@ -239,7 +354,7 @@ export const StoreItemDiscountScalarFieldEnum = {
 export type StoreItemDiscountScalarFieldEnum = (typeof StoreItemDiscountScalarFieldEnum)[keyof typeof StoreItemDiscountScalarFieldEnum]
 
 
-export const StoreItemCategoryScalarFieldEnum = {
+export const ItemCategoryScalarFieldEnum = {
   id: 'id',
   parentId: 'parentId',
   name: 'name',
@@ -247,14 +362,17 @@ export const StoreItemCategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type StoreItemCategoryScalarFieldEnum = (typeof StoreItemCategoryScalarFieldEnum)[keyof typeof StoreItemCategoryScalarFieldEnum]
+export type ItemCategoryScalarFieldEnum = (typeof ItemCategoryScalarFieldEnum)[keyof typeof ItemCategoryScalarFieldEnum]
 
 
 export const TransactionScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  familyId: 'familyId',
+  scope: 'scope',
   type: 'type',
   value: 'value',
+  recordedAt: 'recordedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -268,6 +386,21 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -284,4 +417,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

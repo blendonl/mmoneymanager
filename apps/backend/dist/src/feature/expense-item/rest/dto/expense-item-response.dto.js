@@ -4,18 +4,21 @@ exports.ExpenseItemResponseDto = void 0;
 class ExpenseItemResponseDto {
     id;
     itemId;
+    name;
     expenseId;
     categoryId;
     price;
     discount;
     finalPrice;
     discountPercentage;
+    quantity;
     createdAt;
     updatedAt;
     static fromEntity(item) {
         const dto = new ExpenseItemResponseDto();
         dto.id = item.id;
         dto.itemId = item.itemId;
+        dto.name = item.itemName;
         dto.expenseId = item.expenseId;
         dto.categoryId = item.categoryId;
         dto.price = item.price.toNumber();
@@ -24,6 +27,7 @@ class ExpenseItemResponseDto {
         dto.discountPercentage = item.getDiscountPercentage();
         dto.createdAt = item.createdAt;
         dto.updatedAt = item.updatedAt;
+        dto.quantity = item.quantity;
         return dto;
     }
     static fromEntities(items) {

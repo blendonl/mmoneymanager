@@ -27,8 +27,6 @@ export class ExpenseCategoryController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createDto: CreateExpenseCategoryRequestDto) {
-    console.log(createDto);
-
     const coreDto = new CreateExpenseCategoryDto(
       createDto.name,
       createDto.isConnectedToStore,

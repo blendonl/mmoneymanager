@@ -17,6 +17,7 @@ class CreateExpenseItemRequestDto {
     itemName;
     itemPrice;
     discount;
+    quantity;
 }
 exports.CreateExpenseItemRequestDto = CreateExpenseItemRequestDto;
 __decorate([
@@ -40,11 +41,18 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateExpenseItemRequestDto.prototype, "discount", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_transformer_1.Type)(() => Number),
+    __metadata("design:type", Number)
+], CreateExpenseItemRequestDto.prototype, "quantity", void 0);
 class CreateExpenseRequestDto {
     categoryId;
     storeName;
     storeLocation;
     items;
+    familyId;
+    recordedAt;
 }
 exports.CreateExpenseRequestDto = CreateExpenseRequestDto;
 __decorate([
@@ -68,4 +76,14 @@ __decorate([
     (0, class_validator_1.ArrayMinSize)(1),
     __metadata("design:type", Array)
 ], CreateExpenseRequestDto.prototype, "items", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", String)
+], CreateExpenseRequestDto.prototype, "familyId", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], CreateExpenseRequestDto.prototype, "recordedAt", void 0);
 //# sourceMappingURL=create-expense-request.dto.js.map

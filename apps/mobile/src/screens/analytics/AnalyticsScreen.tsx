@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { SegmentedButtons } from 'react-native-paper';
 import { PieChart, BarChart } from 'react-native-chart-kit';
 import { useAppTheme } from '../../theme';
@@ -138,8 +139,8 @@ export default function AnalyticsScreen() {
         timePeriod === 'year'
           ? date.toLocaleDateString('en-US', { month: 'short' })
           : timePeriod === 'month'
-          ? `W${Math.floor(i / 7) + 1}`
-          : date.toLocaleDateString('en-US', { weekday: 'short' });
+            ? `W${Math.floor(i / 7) + 1}`
+            : date.toLocaleDateString('en-US', { weekday: 'short' });
 
       monthMap.set(key, { expenses: 0, income: 0 });
     }
@@ -235,7 +236,7 @@ export default function AnalyticsScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -373,7 +374,7 @@ export default function AnalyticsScreen() {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -5,6 +5,7 @@ const expense_entity_1 = require("../../domain/entities/expense.entity");
 const transaction_mapper_1 = require("../../../../transaction/core/infrastructure/mappers/transaction.mapper");
 const store_mapper_1 = require("../../../../store/core/infrastructure/mappers/store.mapper");
 const expense_category_mapper_1 = require("../../../../expense-category/core/infrastructure/mappers/expense-category.mapper");
+const expense_item_mapper_1 = require("../../../../expense-item/core/infrastructure/mappers/expense-item.mapper");
 class ExpenseMapper {
     static toDomain(prismaExpense) {
         return new expense_entity_1.Expense({
@@ -15,6 +16,7 @@ class ExpenseMapper {
             category: expense_category_mapper_1.ExpenseCategoryMapper.toDomain(prismaExpense.category),
             storeId: prismaExpense.storeId,
             categoryId: prismaExpense.categoryId,
+            items: prismaExpense.items.map(expense_item_mapper_1.ExpenseItemMapper.toDomain),
             createdAt: prismaExpense.createdAt,
             updatedAt: prismaExpense.updatedAt,
         });

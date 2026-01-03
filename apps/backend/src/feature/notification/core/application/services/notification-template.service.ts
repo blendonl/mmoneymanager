@@ -1,0 +1,93 @@
+import { Injectable } from '@nestjs/common';
+import { NotificationType } from '../../domain/value-objects/notification-type.vo';
+
+export interface NotificationTemplate {
+  title: string;
+  message: string;
+  actionUrl?: string;
+}
+
+@Injectable()
+export class NotificationTemplateService {
+  generateTemplate(
+    type: NotificationType,
+    data: Record<string, any>,
+  ): NotificationTemplate {
+    switch (type) {
+      case NotificationType.FAMILY_INVITATION_SENT:
+        return {
+          title: 'Invitation Sent',
+          message: `You invited ${data.inviteeEmail} to join ${data.familyName}`,
+          actionUrl: `family/${data.familyId}`,
+        };
+
+      case NotificationType.FAMILY_INVITATION_RECEIVED:
+        return {
+          title: 'Family Invitation',
+          message: `${data.inviterName} invited you to join ${data.familyName}`,
+          actionUrl: `family/invitations/${data.invitationId}`,
+        };
+
+      case NotificationType.FAMILY_INVITATION_ACCEPTED:
+        return {
+          title: 'Invitation Accepted',
+          message: `${data.inviteeName} accepted your invitation to ${data.familyName}`,
+          actionUrl: `family/${data.familyId}`,
+        };
+
+      case NotificationType.FAMILY_INVITATION_DECLINED:
+        return {
+          title: 'Invitation Declined',
+          message: `${data.inviteeName} declined your invitation to ${data.familyName}`,
+        };
+
+      case NotificationType.FAMILY_MEMBER_JOINED:
+        return {
+          title: 'New Family Member',
+          message: `${data.memberName} joined ${data.familyName}`,
+          actionUrl: `family/${data.familyId}`,
+        };
+
+      case NotificationType.FAMILY_MEMBER_LEFT:
+        return {
+          title: 'Member Left',
+          message: `${data.memberName} left ${data.familyName}`,
+          actionUrl: `family/${data.familyId}`,
+        };
+
+      case NotificationType.FAMILY_TRANSACTION_CREATED:
+        return {
+          title: 'New Transaction',
+          message: `${data.userName} added a ${data.transactionType?.toLowerCase()} of $${data.amount} in ${data.familyName}`,
+          actionUrl: `transactions/${data.transactionId}`,
+        };
+
+      case NotificationType.RECEIPT_PROCESSING_COMPLETE:
+        return {
+          title: 'Receipt Processed',
+          message: `Your receipt has been processed successfully`,
+          actionUrl: data.receiptId ? `expenses/new?receiptId=${data.receiptId}` : undefined,
+        };
+
+      case NotificationType.TRANSACTION_MILESTONE_BUDGET_ALERT:
+        return {
+          title: 'Budget Alert',
+          message: `You've reached ${data.percentage}% of your ${data.period} budget`,
+          actionUrl: 'analytics',
+        };
+
+      case NotificationType.TRANSACTION_MILESTONE_SPENDING_LIMIT:
+        return {
+          title: 'Spending Limit',
+          message: `You've exceeded your spending limit for ${data.category}`,
+          actionUrl: 'analytics',
+        };
+
+      default:
+        return {
+          title: 'Notification',
+          message: 'You have a new notification',
+        };
+    }
+  }
+}

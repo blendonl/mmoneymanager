@@ -5,11 +5,13 @@ class CreateStoreItemDto {
     storeId;
     name;
     price;
+    categoryId;
     isDiscounted;
-    constructor(storeId, name, price, isDiscounted) {
+    constructor(storeId, name, price, categoryId, isDiscounted) {
         this.storeId = storeId;
         this.name = name;
         this.price = price;
+        this.categoryId = categoryId;
         this.isDiscounted = isDiscounted ?? false;
     }
 }

@@ -8,6 +8,9 @@ export declare class TransactionMapper {
         userId: string;
         type: TransactionType;
         value: import("@prisma/client-runtime-utils").Decimal;
+        familyId: string | null;
+        scope: import("../../domain/entities/transaction.entity").TransactionScope;
+        recordedAt: Date;
         createdAt: Date;
         updatedAt: Date;
     };

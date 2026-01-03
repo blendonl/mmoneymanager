@@ -5,19 +5,37 @@ enum TransactionType {
   @@map("transaction_type")
 }
 
+enum TransactionScope {
+  PERSONAL
+  FAMILY
+
+  @@map("transaction_scope")
+}
+
 model Transaction {
   id     String @id @default(uuid())
   userId String @map("user_id")
 
+  // Family context
+  familyId String? @map("family_id")
+  scope    TransactionScope @default(PERSONAL)
+
   type  TransactionType
   value Decimal
 
-  expense Expense?
-  income  Income?
-  user    User     @relation(fields: [userId], references: [id])
+  recordedAt DateTime @default(now()) @map("recorded_at")
+
+  expense       Expense?
+  income        Income?
+  user          User           @relation(fields: [userId], references: [id])
+  family        Family?        @relation(fields: [familyId], references: [id], onDelete: SetNull)
+  notifications Notification[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([userId])
+  @@index([familyId])
+  @@index([scope])
   @@map("transaction")
 }

@@ -14,6 +14,13 @@ import { ExpenseRestModule } from './feature/expense/rest/expense-rest.module';
 import { StoreRestModule } from './feature/store/rest/store-rest.module';
 import { IncomeCategoryRestModule } from './feature/income-category/rest/income-category-rest.module';
 import { IncomeRestModule } from './feature/income/rest/income-rest.module';
+import { ReceiptRestModule } from './feature/receipt/rest/receipt-rest.module';
+import { FamilyModule } from './feature/family/family.module';
+import { ItemCoreModule } from './feature/item/core/item-core.module';
+import { ItemRestModule } from './feature/item/rest/item-rest.module';
+import { StoreItemDiscountCoreModule } from './feature/store-item-discount/core/store-item-discount-core.module';
+import { StoreItemDiscountRestModule } from './feature/store-item-discount/rest/store-item-discount-rest.module';
+import { NotificationModule } from './feature/notification/notification.module';
 import { AuthGuard } from './feature/auth/rest/guards/auth.guard';
 
 @Module({
@@ -30,6 +37,13 @@ import { AuthGuard } from './feature/auth/rest/guards/auth.guard';
     StoreRestModule,
     IncomeCategoryRestModule,
     IncomeRestModule,
+    ReceiptRestModule,
+    FamilyModule,
+    ItemCoreModule,
+    ItemRestModule,
+    StoreItemDiscountCoreModule,
+    StoreItemDiscountRestModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [

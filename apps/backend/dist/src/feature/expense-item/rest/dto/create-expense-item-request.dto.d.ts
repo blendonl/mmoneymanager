@@ -4,5 +4,6 @@ export declare class CreateExpenseItemRequestDto {
     itemName: string;
     itemPrice: number;
     discount?: number;
+    quantity?: number;
     itemId?: string;
 }

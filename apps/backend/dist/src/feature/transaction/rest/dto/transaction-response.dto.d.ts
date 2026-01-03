@@ -5,6 +5,7 @@ export declare class TransactionResponseDto {
     userId: string;
     type: TransactionType;
     value: number;
+    recordedAt: Date;
     createdAt: Date;
     updatedAt: Date;
     constructor(transaction: Transaction);

@@ -7,6 +7,7 @@ class CreateExpenseItemDto {
     itemName;
     itemPrice;
     discount;
+    quantity;
     itemId;
     constructor(data) {
         this.expenseId = data.expenseId;
@@ -14,6 +15,7 @@ class CreateExpenseItemDto {
         this.itemName = data.itemName;
         this.itemPrice = data.itemPrice;
         this.discount = data.discount ?? 0;
+        this.quantity = data.quantity ?? 1;
         this.itemId = data.itemId;
     }
 }

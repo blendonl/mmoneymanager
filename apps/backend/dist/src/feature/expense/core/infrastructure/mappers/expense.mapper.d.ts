@@ -5,6 +5,19 @@ interface PrismaExpense extends Prisma.ExpenseGetPayload<{
         category: true;
         store: true;
         transaction: true;
+        items: {
+            include: {
+                item: {
+                    include: {
+                        item: {
+                            include: {
+                                category: true;
+                            };
+                        };
+                    };
+                };
+            };
+        };
     };
 }> {
 }

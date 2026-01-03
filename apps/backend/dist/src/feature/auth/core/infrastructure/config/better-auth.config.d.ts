@@ -9,7 +9,18 @@ export declare function createBetterAuthInstance(prisma: PrismaClient): import("
         expiresIn: number;
         updateAge: number;
     };
-    socialProviders: {};
+    socialProviders: {
+        google: {
+            clientId: string;
+            clientSecret: string;
+            enabled: boolean;
+        };
+        apple: {
+            clientId: string;
+            clientSecret: string;
+            enabled: boolean;
+        };
+    };
     plugins: [{
         id: "bearer";
         hooks: {

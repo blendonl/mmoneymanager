@@ -4,6 +4,7 @@ exports.ExpenseResponseDto = void 0;
 const rest_1 = require("../../../transaction/rest");
 const expense_category_response_dto_1 = require("../../../expense-category/rest/dto/expense-category-response.dto");
 const store_response_dto_1 = require("../../../store/rest/dto/store-response.dto");
+const expense_item_response_dto_1 = require("../../../expense-item/rest/dto/expense-item-response.dto");
 class ExpenseResponseDto {
     id;
     transactionId;
@@ -12,6 +13,7 @@ class ExpenseResponseDto {
     transaction;
     category;
     store;
+    items;
     name;
     createdAt;
     updatedAt;
@@ -26,6 +28,7 @@ class ExpenseResponseDto {
         dto.category = expense_category_response_dto_1.ExpenseCategoryResponseDto.fromEntity(expense.category);
         dto.transaction = rest_1.TransactionResponseDto.fromEntity(expense.transaction);
         dto.store = store_response_dto_1.StoreResponseDto.fromEntity(expense.store);
+        dto.items = expense_item_response_dto_1.ExpenseItemResponseDto.fromEntities(expense.items);
         return dto;
     }
     static fromEntities(expenses) {

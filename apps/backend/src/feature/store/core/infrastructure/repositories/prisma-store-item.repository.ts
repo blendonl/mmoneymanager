@@ -17,11 +17,11 @@ export class PrismaStoreItemRepository implements IStoreItemRepository {
     const item = await this.prisma.storeItem.create({
       data: {
         storeId: data.storeId!,
-        name: data.name!,
+        itemId: data.itemId!,
         price: new Decimal(data.price?.toString() || '0'),
-        categoryId: data.categoryId!,
         isDiscounted: data.isDiscounted ?? false,
       },
+      include: { item: true },
     });
 
     return StoreItemMapper.toDomain(item);
@@ -30,6 +30,7 @@ export class PrismaStoreItemRepository implements IStoreItemRepository {
   async findById(id: string): Promise<StoreItem | null> {
     const item = await this.prisma.storeItem.findUnique({
       where: { id },
+      include: { item: true },
     });
 
     return item ? StoreItemMapper.toDomain(item) : null;
@@ -42,9 +43,28 @@ export class PrismaStoreItemRepository implements IStoreItemRepository {
     const item = await this.prisma.storeItem.findFirst({
       where: {
         storeId,
-        name,
+        item: {
+          name,
+        },
       },
       orderBy: { createdAt: 'desc' }, // Get most recent if multiple
+      include: { item: true },
+    });
+
+    return item ? StoreItemMapper.toDomain(item) : null;
+  }
+
+  async findByStoreAndItemId(
+    storeId: string,
+    itemId: string,
+  ): Promise<StoreItem | null> {
+    const item = await this.prisma.storeItem.findFirst({
+      where: {
+        storeId,
+        itemId,
+      },
+      orderBy: { createdAt: 'desc' }, // Get most recent if multiple
+      include: { item: true },
     });
 
     return item ? StoreItemMapper.toDomain(item) : null;
@@ -57,9 +77,10 @@ export class PrismaStoreItemRepository implements IStoreItemRepository {
     const [items, total] = await Promise.all([
       this.prisma.storeItem.findMany({
         where: { storeId },
-        orderBy: { name: 'asc' },
+        orderBy: { createdAt: 'desc' },
         skip: pagination?.skip,
         take: pagination?.take,
+        include: { item: true },
       }),
       this.prisma.storeItem.count({ where: { storeId } }),
     ]);
@@ -73,9 +94,10 @@ export class PrismaStoreItemRepository implements IStoreItemRepository {
   async findAll(pagination?: Pagination): Promise<PaginatedResult<StoreItem>> {
     const [items, total] = await Promise.all([
       this.prisma.storeItem.findMany({
-        orderBy: { name: 'asc' },
+        orderBy: { createdAt: 'desc' },
         skip: pagination?.skip,
         take: pagination?.take,
+        include: { item: true },
       }),
       this.prisma.storeItem.count(),
     ]);
@@ -89,10 +111,6 @@ export class PrismaStoreItemRepository implements IStoreItemRepository {
   async update(id: string, data: Partial<StoreItem>): Promise<StoreItem> {
     const updateData: any = {};
 
-    if (data.name !== undefined) {
-      updateData.name = data.name;
-    }
-
     if (data.price !== undefined) {
       updateData.price = new Decimal(data.price.toString());
     }
@@ -104,6 +122,7 @@ export class PrismaStoreItemRepository implements IStoreItemRepository {
     const item = await this.prisma.storeItem.update({
       where: { id },
       data: updateData,
+      include: { item: true },
     });
 
     return StoreItemMapper.toDomain(item);

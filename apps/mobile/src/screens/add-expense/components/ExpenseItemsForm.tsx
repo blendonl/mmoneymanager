@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
+import { View, Text, Alert, StyleSheet } from "react-native";
+import { IconButton } from "react-native-paper";
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-  StyleSheet,
-  ActivityIndicator,
-} from "react-native";
-import { Category, ExpenseItem, CurrentItem, Store } from "../types";
-import { Input, Button, Card, Chip } from "../../../components/design-system";
+  Category,
+  ExpenseItem,
+  CurrentItem,
+  Store,
+} from "../../../features/expenses/types";
+import {
+  Input,
+  Button,
+  Card,
+  Chip,
+  Dropdown,
+} from "../../../components/design-system";
 import { PriceInput } from "../../../components/forms";
 import { useAppTheme } from "../../../theme";
 import { apiClient } from "../../../api/client";
@@ -29,8 +33,11 @@ interface ExpenseItemsFormProps {
   itemCategories: Category[];
   selectedStore: Store | null;
   onCurrentItemChange: (item: CurrentItem) => void;
-  onAddItem: () => void;
+  onAddItem: (storeId?: string, saveToStore?: boolean) => void;
+  onEditItem: (index: number) => void;
   onRemoveItem: (index: number) => void;
+  onUpdateQuantity: (index: number, change: number) => void;
+  showAddItemForm?: boolean;
 }
 
 export function ExpenseItemsForm({
@@ -40,7 +47,10 @@ export function ExpenseItemsForm({
   selectedStore,
   onCurrentItemChange,
   onAddItem,
+  onEditItem,
   onRemoveItem,
+  onUpdateQuantity,
+  showAddItemForm = true,
 }: ExpenseItemsFormProps) {
   const { theme } = useAppTheme();
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
@@ -48,6 +58,7 @@ export function ExpenseItemsForm({
   const [showItemDropdown, setShowItemDropdown] = useState(false);
   const [showPriceFields, setShowPriceFields] = useState(false);
   const [isExistingItem, setIsExistingItem] = useState(false);
+  const [isCreatingNewItem, setIsCreatingNewItem] = useState(false);
 
   const [categoryInput, setCategoryInput] = useState("");
   const [selectedItemCategory, setSelectedItemCategory] =
@@ -117,10 +128,9 @@ export function ExpenseItemsForm({
     setShowItemDropdown(true);
     setIsExistingItem(false);
 
-    if (text.trim()) {
-      setShowPriceFields(true);
-    } else {
+    if (!text.trim()) {
       setShowPriceFields(false);
+      setIsCreatingNewItem(false);
     }
   };
 
@@ -129,10 +139,13 @@ export function ExpenseItemsForm({
       name: item.name,
       price: item.price.toString(),
       discount: item.discount > 0 ? item.discount.toString() : "",
+      quantity: "1",
       categoryId: item.categoryId,
     });
 
-    const category = localItemCategories.find(cat => cat.id === item.categoryId);
+    const category = localItemCategories.find(
+      (cat) => cat.id === item.categoryId,
+    );
     if (category) {
       setSelectedItemCategory(category);
       setCategoryInput(category.name);
@@ -141,6 +154,13 @@ export function ExpenseItemsForm({
     setShowItemDropdown(false);
     setShowPriceFields(true);
     setIsExistingItem(true);
+    setIsCreatingNewItem(false);
+  };
+
+  const handleCreateNewItem = () => {
+    setIsCreatingNewItem(true);
+    setShowItemDropdown(false);
+    setShowPriceFields(true);
   };
 
   const handleCategoryInputChange = (text: string) => {
@@ -187,8 +207,8 @@ export function ExpenseItemsForm({
       );
 
       const newCategory: Category = {
-        id: response.data.id,
-        name: response.data.name,
+        id: response.id,
+        name: response.name,
         isConnectedToStore: false,
       };
 
@@ -215,11 +235,28 @@ export function ExpenseItemsForm({
     if (!currentItem.name && !currentItem.price && !currentItem.discount) {
       setShowItemDropdown(false);
       setIsExistingItem(false);
+      setIsCreatingNewItem(false);
+      setShowPriceFields(false);
       setCategoryInput("");
       setSelectedItemCategory(null);
       setShowCategoryDropdown(false);
+    } else if (currentItem.name && currentItem.price) {
+      setShowPriceFields(true);
+      setShowItemDropdown(false);
+      setIsCreatingNewItem(true);
+
+      if (currentItem.categoryId) {
+        const category = localItemCategories.find(
+          (cat) => cat.id === currentItem.categoryId,
+        );
+        if (category) {
+          setSelectedItemCategory(category);
+          setCategoryInput(category.name);
+          setShowCategoryDropdown(false);
+        }
+      }
     }
-  }, [currentItem]);
+  }, [currentItem, localItemCategories]);
 
   return (
     <View style={styles.section}>
@@ -233,190 +270,240 @@ export function ExpenseItemsForm({
         Items
       </Text>
 
-      {items.map((item, index) => (
-        <Card key={index} style={styles.itemCard} elevation={1}>
-          <View style={styles.itemContent}>
-            <View style={styles.itemInfo}>
-              <Text
-                style={[
-                  styles.itemName,
-                  theme.custom.typography.bodyMedium,
-                  { color: theme.custom.colors.text },
-                ]}
-              >
-                {item.name}
-              </Text>
-              <Text
-                style={[
-                  styles.itemPrice,
-                  theme.custom.typography.caption,
-                  { color: theme.custom.colors.textSecondary },
-                ]}
-              >
-                ${item.price.toFixed(2)}
-                {item.discount > 0 && ` (-$${item.discount.toFixed(2)})`}
-              </Text>
-            </View>
-            <Button
-              title="Remove"
-              onPress={() => onRemoveItem(index)}
-              variant="text"
-              style={styles.removeButton}
-            />
-          </View>
-        </Card>
-      ))}
+      {items.map((item, index) => {
+        const needsCategory = !item.categoryId || item.categoryId === "";
+        const itemCategory = localItemCategories.find(
+          (cat) => cat.id === item.categoryId,
+        );
 
-      <View style={styles.formSection}>
-        <Text
-          style={[
-            styles.subSectionTitle,
-            theme.custom.typography.h5,
-            { color: theme.custom.colors.text },
-          ]}
-        >
-          Add New Item
-        </Text>
-
-        <View>
-          <Input
-            placeholder="Item name"
-            value={currentItem.name}
-            onChangeText={handleItemNameChange}
-            onFocus={() => setShowItemDropdown(true)}
-            leftIcon="cart"
-          />
-
-          {showItemDropdown && filteredStoreItems.length > 0 && (
-            <View style={styles.dropdown}>
-              <FlatList
-                data={filteredStoreItems}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.dropdownItem}
-                    onPress={() => handleSelectStoreItem(item)}
-                  >
-                    <Text style={styles.dropdownItemText}>{item.price}</Text>
-                    <Text style={styles.dropdownItemPrice}>
-                      ${item.price.toFixed(2)}
-                      {item.discount > 0 && ` (-$${item.discount.toFixed(2)})`}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          )}
-        </View>
-
-        {showPriceFields && (
-          <>
-            <PriceInput
-              label="Price"
-              value={currentItem.price}
-              onChangeText={(text) =>
-                onCurrentItemChange({ ...currentItem, price: text })
-              }
-              placeholder="0.00"
-            />
-            <PriceInput
-              label="Discount (optional)"
-              value={currentItem.discount}
-              onChangeText={(text) =>
-                onCurrentItemChange({ ...currentItem, discount: text })
-              }
-              placeholder="0.00"
-            />
-
-            {!isExistingItem && (
-              <>
+        return (
+          <Card
+            key={index}
+            style={[styles.itemCard, needsCategory && styles.itemCardError]}
+            elevation={1}
+          >
+            <View style={styles.itemContent}>
+              <View style={styles.itemInfo}>
                 <Text
                   style={[
-                    styles.label,
+                    styles.itemName,
                     theme.custom.typography.bodyMedium,
                     { color: theme.custom.colors.text },
                   ]}
                 >
-                  Item Category
+                  {item.quantity > 1 && `${item.quantity}x `}
+                  {item.name}
                 </Text>
-                {selectedItemCategory && !showCategoryDropdown ? (
-                  <View style={styles.selectedContainer}>
-                    <Chip
-                      label={selectedItemCategory.name}
-                      selected={true}
-                      onClose={clearCategorySelection}
-                      style={styles.selectedChip}
-                    />
-                  </View>
+
+                {needsCategory ? (
+                  <Text
+                    style={[
+                      styles.itemWarning,
+                      theme.custom.typography.caption,
+                      { color: theme.custom.colors.error },
+                    ]}
+                  >
+                    Category required
+                  </Text>
                 ) : (
-                  <Input
-                    placeholder="Type or select a category"
-                    value={categoryInput}
-                    onChangeText={handleCategoryInputChange}
-                    onFocus={() => setShowCategoryDropdown(true)}
-                    leftIcon="tag"
+                  <Text
+                    style={[
+                      styles.itemCategory,
+                      theme.custom.typography.caption,
+                      { color: theme.custom.colors.textSecondary },
+                    ]}
+                  >
+                    {itemCategory?.name || "Unknown category"}
+                  </Text>
+                )}
+
+                <Text
+                  style={[
+                    styles.itemPrice,
+                    theme.custom.typography.caption,
+                    { color: theme.custom.colors.textSecondary },
+                  ]}
+                >
+                  ${item.price.toFixed(2)}
+                  {item.discount > 0 && ` (-$${item.discount.toFixed(2)})`}
+                </Text>
+              </View>
+
+              <View style={styles.itemActions}>
+                {item.fromReceipt && (
+                  <IconButton
+                    icon="pencil"
+                    size={20}
+                    onPress={() => onEditItem(index)}
                   />
                 )}
 
-                {showCategoryDropdown && (
-                  <View style={styles.dropdown}>
-                    {filteredItemCategories.length > 0 ? (
-                      <FlatList
-                        data={filteredItemCategories}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity
-                            style={styles.dropdownItem}
-                            onPress={() => handleCategorySelect(item)}
-                          >
-                            <Text style={styles.dropdownItemText}>
-                              {item.name}
-                            </Text>
-                          </TouchableOpacity>
-                        )}
-                        style={styles.dropdownList}
-                        nestedScrollEnabled
-                      />
-                    ) : (
-                      categoryInput.trim() !== "" && (
-                        <Text style={styles.noResultsText}>
-                          No matching categories
-                        </Text>
-                      )
-                    )}
+                <View style={styles.quantityControls}>
+                  <IconButton
+                    icon="minus"
+                    size={20}
+                    onPress={() => onUpdateQuantity(index, -1)}
+                  />
+                  <Text
+                    style={[
+                      theme.custom.typography.bodyMedium,
+                      { color: theme.custom.colors.text, marginHorizontal: 4 },
+                    ]}
+                  >
+                    {item.quantity}
+                  </Text>
+                  <IconButton
+                    icon="plus"
+                    size={20}
+                    onPress={() => onUpdateQuantity(index, 1)}
+                  />
+                </View>
+              </View>
+            </View>
+          </Card>
+        );
+      })}
 
-                    {categoryInput.trim() !== "" &&
+      {showAddItemForm && (
+        <View style={styles.formSection}>
+          <Text
+            style={[
+              styles.subSectionTitle,
+              theme.custom.typography.h5,
+              { color: theme.custom.colors.text },
+            ]}
+          >
+            Add New Item
+          </Text>
+
+          <View>
+            <Input
+              placeholder="Item name"
+              value={currentItem.name}
+              onChangeText={handleItemNameChange}
+              onFocus={() => setShowItemDropdown(true)}
+              leftIcon="cart"
+            />
+
+            <Dropdown
+              items={filteredStoreItems.map((item) => ({
+                id: item.id,
+                label: item.name,
+                subtitle: `$${item.price.toFixed(2)}${item.discount > 0 ? ` (-$${item.discount.toFixed(2)})` : ""}`,
+              }))}
+              visible={showItemDropdown}
+              onSelect={(item) => {
+                const storeItem = filteredStoreItems.find(
+                  (si) => si.id === item.id,
+                );
+                if (storeItem) handleSelectStoreItem(storeItem);
+              }}
+              onCreate={handleCreateNewItem}
+              createLabel={`+ Create new item: "${currentItem.name}"`}
+              showCreateOption={currentItem.name.trim() !== ""}
+              emptyMessage="No matching items"
+            />
+          </View>
+
+          {showPriceFields && (
+            <>
+              <PriceInput
+                label="Price"
+                value={currentItem.price}
+                onChangeText={(text) =>
+                  onCurrentItemChange({ ...currentItem, price: text })
+                }
+                placeholder="0.00"
+              />
+              <PriceInput
+                label="Discount (optional)"
+                value={currentItem.discount}
+                onChangeText={(text) =>
+                  onCurrentItemChange({ ...currentItem, discount: text })
+                }
+                placeholder="0.00"
+              />
+              <Input
+                label="Quantity"
+                value={currentItem.quantity}
+                onChangeText={(text) => {
+                  const cleaned = text.replace(/[^0-9]/g, "");
+                  onCurrentItemChange({ ...currentItem, quantity: cleaned });
+                }}
+                placeholder="1"
+                keyboardType="number-pad"
+              />
+
+              {!isExistingItem && (
+                <>
+                  <Text
+                    style={[
+                      styles.label,
+                      theme.custom.typography.bodyMedium,
+                      { color: theme.custom.colors.text },
+                    ]}
+                  >
+                    Item Category
+                  </Text>
+                  {selectedItemCategory && !showCategoryDropdown ? (
+                    <View style={styles.selectedContainer}>
+                      <Chip
+                        label={selectedItemCategory.name}
+                        selected={true}
+                        onClose={clearCategorySelection}
+                        style={styles.selectedChip}
+                      />
+                    </View>
+                  ) : (
+                    <Input
+                      placeholder="Type or select a category"
+                      value={categoryInput}
+                      onChangeText={handleCategoryInputChange}
+                      onFocus={() => setShowCategoryDropdown(true)}
+                      leftIcon="tag"
+                    />
+                  )}
+
+                  <Dropdown
+                    items={filteredItemCategories.map((cat) => ({
+                      id: cat.id,
+                      label: cat.name,
+                    }))}
+                    visible={showCategoryDropdown}
+                    onSelect={(item) => {
+                      const category = filteredItemCategories.find(
+                        (cat) => cat.id === item.id,
+                      );
+                      if (category) handleCategorySelect(category);
+                    }}
+                    onCreate={handleOpenCreateCategoryModal}
+                    createLabel={`+ Create new category: "${categoryInput}"`}
+                    showCreateOption={
+                      categoryInput.trim() !== "" &&
                       !filteredItemCategories.some(
                         (cat) =>
                           cat.name.toLowerCase() ===
                           categoryInput.toLowerCase(),
-                      ) && (
-                        <TouchableOpacity
-                          style={[styles.dropdownItem, styles.createOption]}
-                          onPress={handleOpenCreateCategoryModal}
-                        >
-                          <Text style={styles.createOptionText}>
-                            + Create new category: "{categoryInput}"
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                  </View>
-                )}
-              </>
-            )}
-          </>
-        )}
+                      )
+                    }
+                    emptyMessage="No matching categories"
+                  />
+                </>
+              )}
+            </>
+          )}
 
-        {showPriceFields && (
-          <Button
-            title="Add Item"
-            onPress={onAddItem}
-            variant="secondary"
-            fullWidth
-            style={styles.addButton}
-          />
-        )}
-      </View>
+          {showPriceFields && (
+            <Button
+              title="Add Item"
+              onPress={() => onAddItem(selectedStore?.id, isCreatingNewItem)}
+              variant="secondary"
+              fullWidth
+              style={styles.addButton}
+            />
+          )}
+        </View>
+      )}
 
       <AddItemCategoryModal
         visible={showCreateCategoryModal}
@@ -460,33 +547,25 @@ const styles = StyleSheet.create({
   itemPrice: {
     marginTop: 2,
   },
-  removeButton: {
-    minWidth: 80,
+  itemCardError: {
+    borderWidth: 2,
+    borderColor: "#EF4444",
+  },
+  itemWarning: {
+    marginTop: 2,
+  },
+  itemCategory: {
+    marginTop: 2,
+  },
+  itemActions: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   formSection: {
     marginTop: 16,
   },
   subSectionTitle: {
     marginBottom: 12,
-  },
-  dropdown: {
-    borderWidth: 1,
-    borderRadius: 8,
-    marginTop: 8,
-    maxHeight: 200,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  dropdownItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-  },
-  dropdownItemText: {},
-  dropdownItemPrice: {
-    marginTop: 4,
   },
   label: {
     marginTop: 12,
@@ -500,5 +579,9 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginTop: 16,
+  },
+  quantityControls: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

@@ -1,13 +1,7 @@
 import React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { Store } from "../types";
-import { Input, Card } from "../../../components/design-system";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { Store } from "../../../features/expenses/types";
+import { Input, Card, Dropdown, DropdownItem } from "../../../components/design-system";
 import { useAppTheme } from "../../../theme";
 
 interface StoreSelectorProps {
@@ -34,6 +28,19 @@ export function StoreSelector({
   onFocus,
 }: StoreSelectorProps) {
   const { theme } = useAppTheme();
+
+  const dropdownItems: DropdownItem[] = stores.map((store) => ({
+    id: store.id,
+    label: store.name,
+    subtitle: store.location,
+  }));
+
+  const handleDropdownSelect = (item: DropdownItem) => {
+    const store = stores.find((s) => s.id === item.id);
+    if (store) {
+      onStoreSelect(store);
+    }
+  };
 
   return (
     <View style={styles.section}>
@@ -92,75 +99,15 @@ export function StoreSelector({
         />
       )}
 
-      {showDropdown && (
-        <View
-          style={[
-            styles.dropdown,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.custom.colors.border,
-            },
-          ]}
-        >
-          {stores.length > 0 && (
-            <FlatList
-              data={stores}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[
-                    styles.dropdownItem,
-                    { borderBottomColor: theme.custom.colors.divider },
-                  ]}
-                  onPress={() => onStoreSelect(item)}
-                >
-                  <Text
-                    style={[
-                      styles.storeText,
-                      theme.custom.typography.bodyMedium,
-                      { color: theme.custom.colors.text },
-                    ]}
-                  >
-                    {item.name}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.storeLocationText,
-                      theme.custom.typography.caption,
-                      { color: theme.custom.colors.textSecondary },
-                    ]}
-                  >
-                    {item.location}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              nestedScrollEnabled
-            />
-          )}
-
-          <TouchableOpacity
-            style={[
-              styles.dropdownItem,
-              styles.addNewOption,
-              {
-                backgroundColor: theme.custom.colors.surfaceVariant,
-                borderTopColor: theme.colors.primary,
-              },
-            ]}
-            onPress={onAddNew}
-          >
-            <Text
-              style={[
-                styles.addNewText,
-                theme.custom.typography.bodyMedium,
-                { color: theme.colors.primary },
-              ]}
-            >
-              + Add new store
-            </Text>
-          </TouchableOpacity>
-        </View>
-      )}
+      <Dropdown
+        items={dropdownItems}
+        visible={showDropdown}
+        onSelect={handleDropdownSelect}
+        onCreate={onAddNew}
+        createLabel="+ Add new store"
+        showCreateOption={true}
+        emptyMessage="No stores found"
+      />
     </View>
   );
 }
@@ -195,28 +142,4 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  dropdown: {
-    borderWidth: 1,
-    borderRadius: 8,
-    marginTop: 8,
-    maxHeight: 200,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  dropdownItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-  },
-  storeText: {},
-  storeLocationText: {
-    marginTop: 4,
-  },
-  addNewOption: {
-    borderTopWidth: 2,
-    borderBottomWidth: 0,
-  },
-  addNewText: {},
 });

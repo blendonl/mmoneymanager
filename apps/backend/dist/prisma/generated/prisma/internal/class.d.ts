@@ -46,10 +46,28 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get expenseCategory(): Prisma.ExpenseCategoryDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    get family(): Prisma.FamilyDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get familyMember(): Prisma.FamilyMemberDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get familyInvitation(): Prisma.FamilyInvitationDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
     get income(): Prisma.IncomeDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get incomeCategory(): Prisma.IncomeCategoryDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get notification(): Prisma.NotificationDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get notificationPreference(): Prisma.NotificationPreferenceDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get deviceToken(): Prisma.DeviceTokenDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get user(): Prisma.UserDelegate<ExtArgs, {
@@ -58,13 +76,16 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get store(): Prisma.StoreDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    get item(): Prisma.ItemDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
     get storeItem(): Prisma.StoreItemDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get storeItemDiscount(): Prisma.StoreItemDiscountDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
-    get storeItemCategory(): Prisma.StoreItemCategoryDelegate<ExtArgs, {
+    get itemCategory(): Prisma.ItemCategoryDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get transaction(): Prisma.TransactionDelegate<ExtArgs, {

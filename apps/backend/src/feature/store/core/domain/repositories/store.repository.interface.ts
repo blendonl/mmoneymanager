@@ -13,6 +13,7 @@ export interface IStoreRepository {
     name: string,
     location: string,
   ): Promise<Store | null>;
+  findBySimilarName(name: string): Promise<Store | null>;
   findAll(
     filters?: { search?: string },
     pagination?: Pagination,

@@ -1,28 +1,13 @@
-import { useState, useMemo } from 'react';
-import { TransactionFilters } from '../components/transactions/FilterSheet';
-
-interface Transaction {
-  id: string;
-  type: 'expense' | 'income';
-  category: {
-    id: string;
-    name: string;
-  };
-  transaction: {
-    value: number;
-    createdAt?: string;
-  };
-  store?: {
-    name: string;
-  };
-  items?: Array<{
-    name: string;
-  }>;
-}
+import { useState, useMemo, useEffect } from 'react';
+import { Transaction, TransactionFilters } from '../features/transactions/types';
+import { useFamily } from '../context/FamilyContext';
 
 export const useFilters = () => {
+  const { selectedFamily } = useFamily();
   const [filters, setFilters] = useState<TransactionFilters>({
     type: 'all',
+    scope: 'all',
+    familyId: null,
     categories: [],
     minAmount: '',
     maxAmount: '',
@@ -32,6 +17,15 @@ export const useFilters = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Sync familyId filter with selected family context
+  useEffect(() => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      familyId: selectedFamily?.id || null,
+      scope: selectedFamily ? 'family' : 'all',
+    }));
+  }, [selectedFamily]);
+
   const applyFilters = (newFilters: TransactionFilters) => {
     setFilters(newFilters);
   };
@@ -39,6 +33,8 @@ export const useFilters = () => {
   const clearFilters = () => {
     setFilters({
       type: 'all',
+      scope: 'all',
+      familyId: null,
       categories: [],
       minAmount: '',
       maxAmount: '',
@@ -50,6 +46,7 @@ export const useFilters = () => {
   const hasActiveFilters = useMemo(() => {
     return (
       filters.type !== 'all' ||
+      filters.scope !== 'all' ||
       filters.categories.length > 0 ||
       filters.minAmount !== '' ||
       filters.maxAmount !== '' ||
@@ -119,6 +116,7 @@ export const useFilters = () => {
   const getActiveFilterCount = () => {
     let count = 0;
     if (filters.type !== 'all') count++;
+    if (filters.scope !== 'all') count++;
     if (filters.categories.length > 0) count += filters.categories.length;
     if (filters.minAmount || filters.maxAmount) count++;
     if (filters.dateFrom || filters.dateTo) count++;

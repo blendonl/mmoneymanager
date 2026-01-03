@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Android emulator localhost
-const BASE_URL = "http://192.168.0.24:3000";
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
 export const apiClient = {
   async get(endpoint: string) {

@@ -22,6 +22,11 @@ export class CreateExpenseItemRequestDto {
   @IsOptional()
   discount?: number;
 
+  @IsNumber()
+  @Min(1)
+  @IsOptional()
+  quantity?: number;
+
   @IsUUID()
   @IsOptional()
   itemId?: string;

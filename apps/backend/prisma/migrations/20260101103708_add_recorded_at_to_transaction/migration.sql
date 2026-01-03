@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "transaction" ADD COLUMN     "recorded_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

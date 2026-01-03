@@ -7,26 +7,17 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Chip } from 'react-native-paper';
 import { SearchBar, EmptyState, Card } from '../../components/design-system';
 import { TransactionCard, FilterSheet } from '../../components/transactions';
+import FamilySwitcher from '../../components/family/FamilySwitcher';
 import { useAppTheme } from '../../theme';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useFilters } from '../../hooks/useFilters';
 
 export default function TransactionsListScreen({ navigation }: any) {
   const { theme } = useAppTheme();
-  const {
-    transactions,
-    loading,
-    error,
-    refreshing,
-    refresh,
-    groupByMonth,
-    getStats,
-    retry,
-  } = useTransactions();
-
   const {
     filters,
     searchQuery,
@@ -36,6 +27,17 @@ export default function TransactionsListScreen({ navigation }: any) {
     filterTransactions,
     getActiveFilterCount,
   } = useFilters();
+
+  const {
+    transactions,
+    loading,
+    error,
+    refreshing,
+    refresh,
+    groupByMonth,
+    getStats,
+    retry,
+  } = useTransactions(filters);
 
   const [filterSheetVisible, setFilterSheetVisible] = useState(false);
 
@@ -223,8 +225,9 @@ export default function TransactionsListScreen({ navigation }: any) {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top']}>
       <View style={styles.header}>
+        <FamilySwitcher style={styles.familySwitcher} compact />
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -280,7 +283,7 @@ export default function TransactionsListScreen({ navigation }: any) {
         onApply={applyFilters}
         onClear={clearFilters}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -296,6 +299,9 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     paddingBottom: 8,
+  },
+  familySwitcher: {
+    marginBottom: 12,
   },
   searchBar: {
     marginBottom: 8,

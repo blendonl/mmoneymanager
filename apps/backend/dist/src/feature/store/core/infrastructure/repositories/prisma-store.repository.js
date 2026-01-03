@@ -42,6 +42,20 @@ let PrismaStoreRepository = class PrismaStoreRepository {
         });
         return store ? store_mapper_1.StoreMapper.toDomain(store) : null;
     }
+    async findBySimilarName(name) {
+        const store = await this.prisma.store.findFirst({
+            where: {
+                name: {
+                    contains: name,
+                    mode: 'insensitive',
+                },
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+        return store ? store_mapper_1.StoreMapper.toDomain(store) : null;
+    }
     async findAll(filters, pagination) {
         const where = {};
         if (filters?.search) {

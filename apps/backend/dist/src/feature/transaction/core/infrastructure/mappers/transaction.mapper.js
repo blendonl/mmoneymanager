@@ -9,6 +9,9 @@ class TransactionMapper {
             userId: prismaTransaction.userId,
             type: prismaTransaction.type,
             value: prismaTransaction.value,
+            familyId: prismaTransaction.familyId ?? undefined,
+            scope: prismaTransaction.scope,
+            recordedAt: prismaTransaction.recordedAt,
             createdAt: prismaTransaction.createdAt,
             updatedAt: prismaTransaction.updatedAt,
         });
@@ -19,6 +22,9 @@ class TransactionMapper {
             userId: transaction.userId,
             type: transaction.type,
             value: transaction.value,
+            familyId: transaction.familyId ?? null,
+            scope: transaction.scope,
+            recordedAt: transaction.recordedAt,
             createdAt: transaction.createdAt,
             updatedAt: transaction.updatedAt,
         };

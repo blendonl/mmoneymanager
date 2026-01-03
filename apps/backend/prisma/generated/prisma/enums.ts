@@ -9,9 +9,71 @@
 * 🟢 You can import this file directly.
 */
 
+export const FamilyMemberRole = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER'
+} as const
+
+export type FamilyMemberRole = (typeof FamilyMemberRole)[keyof typeof FamilyMemberRole]
+
+
+export const FamilyInvitationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type FamilyInvitationStatus = (typeof FamilyInvitationStatus)[keyof typeof FamilyInvitationStatus]
+
+
+export const NotificationType = {
+  FAMILY_INVITATION_SENT: 'FAMILY_INVITATION_SENT',
+  FAMILY_INVITATION_RECEIVED: 'FAMILY_INVITATION_RECEIVED',
+  FAMILY_INVITATION_ACCEPTED: 'FAMILY_INVITATION_ACCEPTED',
+  FAMILY_INVITATION_DECLINED: 'FAMILY_INVITATION_DECLINED',
+  FAMILY_MEMBER_JOINED: 'FAMILY_MEMBER_JOINED',
+  FAMILY_MEMBER_LEFT: 'FAMILY_MEMBER_LEFT',
+  FAMILY_TRANSACTION_CREATED: 'FAMILY_TRANSACTION_CREATED',
+  TRANSACTION_MILESTONE_BUDGET_ALERT: 'TRANSACTION_MILESTONE_BUDGET_ALERT',
+  TRANSACTION_MILESTONE_SPENDING_LIMIT: 'TRANSACTION_MILESTONE_SPENDING_LIMIT',
+  RECEIPT_PROCESSING_COMPLETE: 'RECEIPT_PROCESSING_COMPLETE'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const NotificationDeliveryMethod = {
+  PUSH: 'PUSH',
+  IN_APP: 'IN_APP',
+  TOAST: 'TOAST'
+} as const
+
+export type NotificationDeliveryMethod = (typeof NotificationDeliveryMethod)[keyof typeof NotificationDeliveryMethod]
+
+
+export const NotificationPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type NotificationPriority = (typeof NotificationPriority)[keyof typeof NotificationPriority]
+
+
 export const TransactionType = {
   EXPENSE: 'EXPENSE',
   INCOME: 'INCOME'
 } as const
 
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+
+export const TransactionScope = {
+  PERSONAL: 'PERSONAL',
+  FAMILY: 'FAMILY'
+} as const
+
+export type TransactionScope = (typeof TransactionScope)[keyof typeof TransactionScope]

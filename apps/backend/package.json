@@ -21,19 +21,24 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/adapter-pg": "^7.1.0",
     "@prisma/client": "^7.1.0",
     "@prisma/config": "^7.1.0",
+    "@types/multer": "^2.0.0",
     "better-auth": "^1.4.7",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "dotenv": "^17.2.3",
+    "multer": "^2.0.2",
     "pg": "^8.16.3",
     "prisma": "^7.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "sharp": "^0.33.0",
+    "tesseract.js": "^7.0.0",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -46,6 +51,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/pg": "^8",
+    "@types/sharp": "^0.32.0",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^11.0.0",
     "eslint": "^9.18.0",
@@ -78,6 +84,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^~(.*)$": "<rootDir>/$1"
+    }
   }
 }

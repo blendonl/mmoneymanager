@@ -15,7 +15,7 @@ export class PrismaStoreItemCategoryRepository
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: Partial<StoreItemCategory>): Promise<StoreItemCategory> {
-    const category = await this.prisma.storeItemCategory.create({
+    const category = await this.prisma.itemCategory.create({
       data: {
         name: data.name!,
         parentId: data.parentId ?? null,
@@ -26,7 +26,7 @@ export class PrismaStoreItemCategoryRepository
   }
 
   async findById(id: string): Promise<StoreItemCategory | null> {
-    const category = await this.prisma.storeItemCategory.findUnique({
+    const category = await this.prisma.itemCategory.findUnique({
       where: { id },
     });
 
@@ -37,12 +37,12 @@ export class PrismaStoreItemCategoryRepository
     pagination?: Pagination,
   ): Promise<PaginatedResult<StoreItemCategory>> {
     const [categories, total] = await Promise.all([
-      this.prisma.storeItemCategory.findMany({
+      this.prisma.itemCategory.findMany({
         orderBy: { name: 'asc' },
         skip: pagination?.skip,
         take: pagination?.take,
       }),
-      this.prisma.storeItemCategory.count(),
+      this.prisma.itemCategory.count(),
     ]);
 
     return {
@@ -56,13 +56,13 @@ export class PrismaStoreItemCategoryRepository
     pagination?: Pagination,
   ): Promise<PaginatedResult<StoreItemCategory>> {
     const [categories, total] = await Promise.all([
-      this.prisma.storeItemCategory.findMany({
+      this.prisma.itemCategory.findMany({
         where: { parentId },
         orderBy: { name: 'asc' },
         skip: pagination?.skip,
         take: pagination?.take,
       }),
-      this.prisma.storeItemCategory.count({ where: { parentId } }),
+      this.prisma.itemCategory.count({ where: { parentId } }),
     ]);
 
     return {
@@ -72,7 +72,7 @@ export class PrismaStoreItemCategoryRepository
   }
 
   async findChildren(parentId: string): Promise<StoreItemCategory[]> {
-    const categories = await this.prisma.storeItemCategory.findMany({
+    const categories = await this.prisma.itemCategory.findMany({
       where: { parentId },
       orderBy: { name: 'asc' },
     });
@@ -94,7 +94,7 @@ export class PrismaStoreItemCategoryRepository
       updateData.parentId = data.parentId;
     }
 
-    const category = await this.prisma.storeItemCategory.update({
+    const category = await this.prisma.itemCategory.update({
       where: { id },
       data: updateData,
     });
@@ -103,7 +103,7 @@ export class PrismaStoreItemCategoryRepository
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.storeItemCategory.delete({
+    await this.prisma.itemCategory.delete({
       where: { id },
     });
   }

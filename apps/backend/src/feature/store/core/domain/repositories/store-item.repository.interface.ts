@@ -10,6 +10,7 @@ export interface IStoreItemRepository {
   create(data: Partial<StoreItem>): Promise<StoreItem>;
   findById(id: string): Promise<StoreItem | null>;
   findByStoreAndName(storeId: string, name: string): Promise<StoreItem | null>;
+  findByStoreAndItemId(storeId: string, itemId: string): Promise<StoreItem | null>;
   findByStoreId(
     storeId: string,
     pagination?: Pagination,

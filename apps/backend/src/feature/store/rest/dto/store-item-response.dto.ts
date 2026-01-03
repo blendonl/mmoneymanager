@@ -14,12 +14,12 @@ export class StoreItemResponseDto {
     const dto = new StoreItemResponseDto();
     dto.id = storeItem.id;
     dto.storeId = storeItem.storeId;
-    dto.name = storeItem.name;
+    dto.name = storeItem.item?.name ?? '';
     dto.price = storeItem.price.toNumber();
     dto.isDiscounted = storeItem.isDiscounted;
     dto.createdAt = storeItem.createdAt;
     dto.updatedAt = storeItem.updatedAt;
-    dto.categoryId = storeItem.categoryId;
+    dto.categoryId = storeItem.item?.categoryId ?? '';
 
     return dto;
   }

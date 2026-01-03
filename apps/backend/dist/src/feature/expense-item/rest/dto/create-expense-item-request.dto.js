@@ -17,6 +17,7 @@ class CreateExpenseItemRequestDto {
     itemName;
     itemPrice;
     discount;
+    quantity;
     itemId;
 }
 exports.CreateExpenseItemRequestDto = CreateExpenseItemRequestDto;
@@ -46,6 +47,12 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateExpenseItemRequestDto.prototype, "discount", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateExpenseItemRequestDto.prototype, "quantity", void 0);
 __decorate([
     (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsOptional)(),

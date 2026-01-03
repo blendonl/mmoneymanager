@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Card } from '../design-system';
 import { useAppTheme } from '../../theme';
-import { Transaction } from '../../hooks/useTransactions';
+import { Transaction } from '../../features/transactions/types';
 
 interface TransactionCardProps {
   transaction: Transaction;
@@ -44,6 +45,15 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
   return (
     <TouchableOpacity onPress={onPress} disabled={!onPress} activeOpacity={0.7}>
       <Card style={styles.card} elevation={2}>
+        {transaction.scope === 'FAMILY' && (
+          <View style={styles.scopeBadge}>
+            <MaterialCommunityIcons
+              name="account-group"
+              size={12}
+              color="#4CAF50"
+            />
+          </View>
+        )}
         <View style={styles.content}>
           <View style={styles.leftSection}>
             <View
@@ -130,6 +140,17 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: 16,
     marginBottom: 8,
+    position: 'relative',
+  },
+  scopeBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: 'rgba(76, 175, 80, 0.15)',
+    borderRadius: 12,
+    padding: 4,
+    paddingHorizontal: 6,
+    zIndex: 1,
   },
   content: {
     flexDirection: 'row',

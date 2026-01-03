@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionCoreModule = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_module_1 = require("../../../common/prisma/prisma.module");
+const family_core_module_1 = require("../../family/core/family-core.module");
 const transaction_service_1 = require("./application/services/transaction.service");
 const create_transaction_use_case_1 = require("./application/use-cases/create-transaction.use-case");
 const get_transaction_by_id_use_case_1 = require("./application/use-cases/get-transaction-by-id.use-case");
@@ -22,7 +23,7 @@ let TransactionCoreModule = class TransactionCoreModule {
 exports.TransactionCoreModule = TransactionCoreModule;
 exports.TransactionCoreModule = TransactionCoreModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule],
+        imports: [prisma_module_1.PrismaModule, family_core_module_1.FamilyCoreModule],
         providers: [
             {
                 provide: 'TransactionRepository',

@@ -68,6 +68,21 @@ export type Expense = Prisma.ExpenseModel
  */
 export type ExpenseCategory = Prisma.ExpenseCategoryModel
 /**
+ * Model Family
+ * 
+ */
+export type Family = Prisma.FamilyModel
+/**
+ * Model FamilyMember
+ * 
+ */
+export type FamilyMember = Prisma.FamilyMemberModel
+/**
+ * Model FamilyInvitation
+ * 
+ */
+export type FamilyInvitation = Prisma.FamilyInvitationModel
+/**
  * Model Income
  * 
  */
@@ -77,6 +92,21 @@ export type Income = Prisma.IncomeModel
  * 
  */
 export type IncomeCategory = Prisma.IncomeCategoryModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model NotificationPreference
+ * 
+ */
+export type NotificationPreference = Prisma.NotificationPreferenceModel
+/**
+ * Model DeviceToken
+ * 
+ */
+export type DeviceToken = Prisma.DeviceTokenModel
 /**
  * Model User
  * 
@@ -88,6 +118,11 @@ export type User = Prisma.UserModel
  */
 export type Store = Prisma.StoreModel
 /**
+ * Model Item
+ * 
+ */
+export type Item = Prisma.ItemModel
+/**
  * Model StoreItem
  * 
  */
@@ -98,10 +133,10 @@ export type StoreItem = Prisma.StoreItemModel
  */
 export type StoreItemDiscount = Prisma.StoreItemDiscountModel
 /**
- * Model StoreItemCategory
+ * Model ItemCategory
  * 
  */
-export type StoreItemCategory = Prisma.StoreItemCategoryModel
+export type ItemCategory = Prisma.ItemCategoryModel
 /**
  * Model Transaction
  * 

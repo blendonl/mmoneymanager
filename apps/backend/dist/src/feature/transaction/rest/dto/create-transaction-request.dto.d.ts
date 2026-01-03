@@ -3,4 +3,5 @@ export declare class CreateTransactionRequestDto {
     userId: string;
     type: TransactionType;
     value: number;
+    recordedAt?: string;
 }

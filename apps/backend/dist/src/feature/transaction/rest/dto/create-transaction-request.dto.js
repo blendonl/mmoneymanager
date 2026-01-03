@@ -16,6 +16,7 @@ class CreateTransactionRequestDto {
     userId;
     type;
     value;
+    recordedAt;
 }
 exports.CreateTransactionRequestDto = CreateTransactionRequestDto;
 __decorate([
@@ -34,4 +35,9 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Number)
 ], CreateTransactionRequestDto.prototype, "value", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsDateString)(),
+    __metadata("design:type", String)
+], CreateTransactionRequestDto.prototype, "recordedAt", void 0);
 //# sourceMappingURL=create-transaction-request.dto.js.map

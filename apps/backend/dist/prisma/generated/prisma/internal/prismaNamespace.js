@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.defineExtension = exports.NullsOrder = exports.QueryMode = exports.SortOrder = exports.TransactionScalarFieldEnum = exports.StoreItemCategoryScalarFieldEnum = exports.StoreItemDiscountScalarFieldEnum = exports.StoreItemScalarFieldEnum = exports.StoreScalarFieldEnum = exports.UserScalarFieldEnum = exports.IncomeCategoryScalarFieldEnum = exports.IncomeScalarFieldEnum = exports.ExpenseCategoryScalarFieldEnum = exports.ExpenseScalarFieldEnum = exports.ExpenseItemScalarFieldEnum = exports.VerificationScalarFieldEnum = exports.SessionScalarFieldEnum = exports.AccountScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
+exports.defineExtension = exports.JsonNullValueFilter = exports.NullsOrder = exports.QueryMode = exports.JsonNullValueInput = exports.NullableJsonNullValueInput = exports.SortOrder = exports.TransactionScalarFieldEnum = exports.ItemCategoryScalarFieldEnum = exports.StoreItemDiscountScalarFieldEnum = exports.StoreItemScalarFieldEnum = exports.ItemScalarFieldEnum = exports.StoreScalarFieldEnum = exports.UserScalarFieldEnum = exports.DeviceTokenScalarFieldEnum = exports.NotificationPreferenceScalarFieldEnum = exports.NotificationScalarFieldEnum = exports.IncomeCategoryScalarFieldEnum = exports.IncomeScalarFieldEnum = exports.FamilyInvitationScalarFieldEnum = exports.FamilyMemberScalarFieldEnum = exports.FamilyScalarFieldEnum = exports.ExpenseCategoryScalarFieldEnum = exports.ExpenseScalarFieldEnum = exports.ExpenseItemScalarFieldEnum = exports.VerificationScalarFieldEnum = exports.SessionScalarFieldEnum = exports.AccountScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/client"));
 exports.PrismaClientKnownRequestError = runtime.PrismaClientKnownRequestError;
 exports.PrismaClientUnknownRequestError = runtime.PrismaClientUnknownRequestError;
@@ -66,13 +66,20 @@ exports.ModelName = {
     ExpenseItem: 'ExpenseItem',
     Expense: 'Expense',
     ExpenseCategory: 'ExpenseCategory',
+    Family: 'Family',
+    FamilyMember: 'FamilyMember',
+    FamilyInvitation: 'FamilyInvitation',
     Income: 'Income',
     IncomeCategory: 'IncomeCategory',
+    Notification: 'Notification',
+    NotificationPreference: 'NotificationPreference',
+    DeviceToken: 'DeviceToken',
     User: 'User',
     Store: 'Store',
+    Item: 'Item',
     StoreItem: 'StoreItem',
     StoreItemDiscount: 'StoreItemDiscount',
-    StoreItemCategory: 'StoreItemCategory',
+    ItemCategory: 'ItemCategory',
     Transaction: 'Transaction'
 };
 exports.TransactionIsolationLevel = runtime.makeStrictEnum({
@@ -117,6 +124,7 @@ exports.ExpenseItemScalarFieldEnum = {
     expenseId: 'expenseId',
     price: 'price',
     discount: 'discount',
+    quantity: 'quantity',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
@@ -137,6 +145,34 @@ exports.ExpenseCategoryScalarFieldEnum = {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
+exports.FamilyScalarFieldEnum = {
+    id: 'id',
+    name: 'name',
+    balance: 'balance',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.FamilyMemberScalarFieldEnum = {
+    id: 'id',
+    familyId: 'familyId',
+    userId: 'userId',
+    role: 'role',
+    balance: 'balance',
+    joinedAt: 'joinedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.FamilyInvitationScalarFieldEnum = {
+    id: 'id',
+    familyId: 'familyId',
+    inviterId: 'inviterId',
+    inviteeId: 'inviteeId',
+    inviteeEmail: 'inviteeEmail',
+    status: 'status',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
 exports.IncomeScalarFieldEnum = {
     id: 'id',
     transactionId: 'transactionId',
@@ -149,6 +185,51 @@ exports.IncomeCategoryScalarFieldEnum = {
     id: 'id',
     parentId: 'parentId',
     name: 'name',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.NotificationScalarFieldEnum = {
+    id: 'id',
+    userId: 'userId',
+    type: 'type',
+    priority: 'priority',
+    title: 'title',
+    message: 'message',
+    data: 'data',
+    deliveryMethods: 'deliveryMethods',
+    isRead: 'isRead',
+    readAt: 'readAt',
+    isInteracted: 'isInteracted',
+    interactedAt: 'interactedAt',
+    actionUrl: 'actionUrl',
+    familyId: 'familyId',
+    transactionId: 'transactionId',
+    invitationId: 'invitationId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.NotificationPreferenceScalarFieldEnum = {
+    id: 'id',
+    userId: 'userId',
+    enablePushNotifications: 'enablePushNotifications',
+    enableInAppNotifications: 'enableInAppNotifications',
+    enableToastNotifications: 'enableToastNotifications',
+    quietHoursEnabled: 'quietHoursEnabled',
+    quietHoursStart: 'quietHoursStart',
+    quietHoursEnd: 'quietHoursEnd',
+    typePreferences: 'typePreferences',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.DeviceTokenScalarFieldEnum = {
+    id: 'id',
+    userId: 'userId',
+    expoPushToken: 'expoPushToken',
+    platform: 'platform',
+    deviceId: 'deviceId',
+    deviceName: 'deviceName',
+    isActive: 'isActive',
+    lastUsed: 'lastUsed',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
@@ -170,11 +251,17 @@ exports.StoreScalarFieldEnum = {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
-exports.StoreItemScalarFieldEnum = {
+exports.ItemScalarFieldEnum = {
     id: 'id',
-    storeId: 'storeId',
     categoryId: 'categoryId',
     name: 'name',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+exports.StoreItemScalarFieldEnum = {
+    id: 'id',
+    itemId: 'itemId',
+    storeId: 'storeId',
     price: 'price',
     isDiscounted: 'isDiscounted',
     createdAt: 'createdAt',
@@ -189,7 +276,7 @@ exports.StoreItemDiscountScalarFieldEnum = {
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
-exports.StoreItemCategoryScalarFieldEnum = {
+exports.ItemCategoryScalarFieldEnum = {
     id: 'id',
     parentId: 'parentId',
     name: 'name',
@@ -199,14 +286,24 @@ exports.StoreItemCategoryScalarFieldEnum = {
 exports.TransactionScalarFieldEnum = {
     id: 'id',
     userId: 'userId',
+    familyId: 'familyId',
+    scope: 'scope',
     type: 'type',
     value: 'value',
+    recordedAt: 'recordedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
 };
 exports.SortOrder = {
     asc: 'asc',
     desc: 'desc'
+};
+exports.NullableJsonNullValueInput = {
+    DbNull: exports.DbNull,
+    JsonNull: exports.JsonNull
+};
+exports.JsonNullValueInput = {
+    JsonNull: exports.JsonNull
 };
 exports.QueryMode = {
     default: 'default',
@@ -215,6 +312,11 @@ exports.QueryMode = {
 exports.NullsOrder = {
     first: 'first',
     last: 'last'
+};
+exports.JsonNullValueFilter = {
+    DbNull: exports.DbNull,
+    JsonNull: exports.JsonNull,
+    AnyNull: exports.AnyNull
 };
 exports.defineExtension = runtime.Extensions.defineExtension;
 //# sourceMappingURL=prismaNamespace.js.map

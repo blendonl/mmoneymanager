@@ -1,11 +1,19 @@
 import { Decimal } from 'prisma/generated/prisma/internal/prismaNamespace';
 import { TransactionType } from '../value-objects/transaction-type.vo';
 
+export enum TransactionScope {
+  PERSONAL = 'PERSONAL',
+  FAMILY = 'FAMILY',
+}
+
 export interface TransactionProps {
   id: string;
   userId: string;
+  familyId?: string;
+  scope: TransactionScope;
   type: TransactionType;
   value: Decimal;
+  recordedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,12 +52,24 @@ export class Transaction {
     return this.props.userId;
   }
 
+  get familyId(): string | undefined {
+    return this.props.familyId;
+  }
+
+  get scope(): TransactionScope {
+    return this.props.scope;
+  }
+
   get type(): TransactionType {
     return this.props.type;
   }
 
   get value(): Decimal {
     return this.props.value;
+  }
+
+  get recordedAt(): Date {
+    return this.props.recordedAt;
   }
 
   get createdAt(): Date {
@@ -68,12 +88,23 @@ export class Transaction {
     return this.props.type === TransactionType.INCOME;
   }
 
+  isPersonal(): boolean {
+    return this.props.scope === TransactionScope.PERSONAL;
+  }
+
+  isFamily(): boolean {
+    return this.props.scope === TransactionScope.FAMILY;
+  }
+
   toJSON() {
     return {
       id: this.id,
       userId: this.userId,
+      familyId: this.familyId,
+      scope: this.scope,
       type: this.type,
       value: this.value.toNumber(),
+      recordedAt: this.recordedAt,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     };

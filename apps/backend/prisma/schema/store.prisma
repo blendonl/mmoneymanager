@@ -13,19 +13,33 @@ model Store {
   @@map("store")
 }
 
-model StoreItem {
-  id          String @id @default(uuid())
-  storeId     String @map("store_id")
-  categoryId  String @map("category_id") 
+model Item {
+  id         String @id @default(uuid())
+  categoryId String @map("category_id")
 
-  name         String
+  name String
+
+  category ItemCategory @relation(fields: [categoryId], references: [id])
+  stores   StoreItem[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("item")
+}
+
+model StoreItem {
+  id      String @id @default(uuid())
+  itemId  String @map("item_id")
+  storeId String @map("store_id")
+
   price        Decimal
   isDiscounted Boolean @map("is_discounted")
 
   store     Store               @relation(fields: [storeId], references: [id])
+  item      Item                @relation(fields: [itemId], references: [id])
   discounts StoreItemDiscount[]
   expenses  ExpenseItem[]
-  category  StoreItemCategory   @relation(fields: [categoryId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -49,18 +63,18 @@ model StoreItemDiscount {
   @@map("store_item_discount")
 }
 
-model StoreItemCategory {
+model ItemCategory {
   id       String  @id @default(uuid())
   parentId String? @map("parent_id")
 
   name String
 
-  parent   StoreItemCategory?  @relation(name: "children", fields: [parentId], references: [id])
-  children StoreItemCategory[] @relation(name: "children")
-  items    StoreItem[]
+  parent   ItemCategory?  @relation(name: "children", fields: [parentId], references: [id])
+  children ItemCategory[] @relation(name: "children")
+  items    Item[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("expense_item_category")
+  @@map("item_category")
 }

@@ -14,8 +14,8 @@ class StoreItem {
         if (!props.storeId || props.storeId.trim() === '') {
             throw new Error('Store ID is required');
         }
-        if (!props.name || props.name.trim() === '') {
-            throw new Error('Store item name is required');
+        if (!props.itemId || props.itemId.trim() === '') {
+            throw new Error('Item ID is required');
         }
         if (!props.price || props.price.toNumber() < 0) {
             throw new Error('Store item price must be non-negative');
@@ -27,17 +27,17 @@ class StoreItem {
             throw new Error('Updated date is required');
         }
     }
-    get categoryId() {
-        return this.props.categoryId;
-    }
     get id() {
         return this.props.id;
     }
     get storeId() {
         return this.props.storeId;
     }
-    get name() {
-        return this.props.name;
+    get itemId() {
+        return this.props.itemId;
+    }
+    get item() {
+        return this.props.item;
     }
     get price() {
         return this.props.price;
@@ -51,16 +51,26 @@ class StoreItem {
     get updatedAt() {
         return this.props.updatedAt;
     }
-    getCurrentPrice() {
-        return this.props.price;
+    getCurrentPrice(activeDiscount) {
+        if (!this.props.isDiscounted || !activeDiscount || !activeDiscount.isActive()) {
+            return this.props.price;
+        }
+        return this.props.price.minus(activeDiscount.discount);
+    }
+    getDiscountPercentage(activeDiscount) {
+        if (!this.props.isDiscounted || !activeDiscount || !activeDiscount.isActive()) {
+            return 0;
+        }
+        return (activeDiscount.discount.toNumber() / this.props.price.toNumber()) * 100;
     }
     toJSON() {
         return {
             id: this.props.id,
             storeId: this.props.storeId,
-            name: this.props.name,
+            itemId: this.props.itemId,
             price: this.props.price.toNumber(),
             isDiscounted: this.props.isDiscounted,
+            item: this.props.item?.toJSON(),
             createdAt: this.props.createdAt,
             updatedAt: this.props.updatedAt,
         };

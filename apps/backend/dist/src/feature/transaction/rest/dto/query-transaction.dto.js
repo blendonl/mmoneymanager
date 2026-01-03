@@ -13,9 +13,12 @@ exports.QueryTransactionDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const transaction_type_vo_1 = require("../../core/domain/value-objects/transaction-type.vo");
+const transaction_entity_1 = require("../../core/domain/entities/transaction.entity");
 class QueryTransactionDto {
     userId;
     type;
+    familyId;
+    scope;
     dateFrom;
     dateTo;
     valueMin;
@@ -34,6 +37,16 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], QueryTransactionDto.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], QueryTransactionDto.prototype, "familyId", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(transaction_entity_1.TransactionScope),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], QueryTransactionDto.prototype, "scope", void 0);
 __decorate([
     (0, class_validator_1.IsDateString)(),
     (0, class_validator_1.IsOptional)(),

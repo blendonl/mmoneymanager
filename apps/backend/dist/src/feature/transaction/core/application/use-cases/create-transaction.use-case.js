@@ -14,19 +14,37 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateTransactionUseCase = void 0;
 const common_1 = require("@nestjs/common");
+const transaction_entity_1 = require("../../domain/entities/transaction.entity");
 const prismaNamespace_1 = require("../../../../../../prisma/generated/prisma/internal/prismaNamespace");
+const family_balance_service_1 = require("../../../../family/core/application/services/family-balance.service");
 let CreateTransactionUseCase = class CreateTransactionUseCase {
     transactionRepository;
-    constructor(transactionRepository) {
+    familyRepository;
+    familyBalanceService;
+    constructor(transactionRepository, familyRepository, familyBalanceService) {
         this.transactionRepository = transactionRepository;
+        this.familyRepository = familyRepository;
+        this.familyBalanceService = familyBalanceService;
     }
     async execute(dto) {
         this.validateTransactionData(dto);
+        if (dto.familyId) {
+            const member = await this.familyRepository.findMember(dto.familyId, dto.userId);
+            if (!member) {
+                throw new common_1.ForbiddenException('Not a member of this family');
+            }
+        }
         const transaction = await this.transactionRepository.create({
             userId: dto.userId,
             type: dto.type,
             value: new prismaNamespace_1.Decimal(dto.value),
+            familyId: dto.familyId,
+            scope: dto.familyId ? transaction_entity_1.TransactionScope.FAMILY : transaction_entity_1.TransactionScope.PERSONAL,
+            recordedAt: dto.recordedAt || new Date(),
         });
+        if (dto.familyId) {
+            await this.familyBalanceService.updateBalancesAfterTransaction(dto.familyId, dto.userId, transaction);
+        }
         return transaction;
     }
     validateTransactionData(dto) {
@@ -45,6 +63,7 @@ exports.CreateTransactionUseCase = CreateTransactionUseCase;
 exports.CreateTransactionUseCase = CreateTransactionUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('TransactionRepository')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)('FamilyRepository')),
+    __metadata("design:paramtypes", [Object, Object, family_balance_service_1.FamilyBalanceService])
 ], CreateTransactionUseCase);
 //# sourceMappingURL=create-transaction.use-case.js.map

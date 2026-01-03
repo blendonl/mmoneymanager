@@ -42,6 +42,8 @@ export class TransactionController {
     const filters = new TransactionFilters({
       userId: query.userId,
       type: query.type,
+      familyId: query.familyId,
+      scope: query.scope,
       dateFrom: query.dateFrom ? new Date(query.dateFrom) : undefined,
       dateTo: query.dateTo ? new Date(query.dateTo) : undefined,
       valueMin: query.valueMin,

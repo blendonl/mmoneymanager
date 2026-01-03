@@ -1,5 +1,6 @@
 import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { type IStoreItemRepository } from '../../domain/repositories/store-item.repository.interface';
+import { type IItemRepository } from '../../../../item/core/domain/repositories/item.repository.interface';
 import { CreateStoreItemDto } from '../dto/create-store-item.dto';
 import { StoreItem } from '../../domain/entities/store-item.entity';
 import { Decimal } from 'prisma/generated/prisma/internal/prismaNamespace';
@@ -9,35 +10,49 @@ export class CreateOrFindStoreItemUseCase {
   constructor(
     @Inject('StoreItemRepository')
     private readonly storeItemRepository: IStoreItemRepository,
-  ) {}
+    @Inject('ItemRepository')
+    private readonly itemRepository: IItemRepository,
+  ) { }
 
   async execute(dto: CreateStoreItemDto): Promise<StoreItem> {
     this.validate(dto);
 
-    // Try to find existing item by store and name
-    const existingItem = await this.storeItemRepository.findByStoreAndName(
-      dto.storeId,
+    // 1. Create or find Item first
+    let item = await this.itemRepository.findByNameAndCategory(
       dto.name,
+      dto.categoryId,
     );
 
-    if (existingItem) {
-      // If item exists and price matches, return existing
-      const newPrice = new Decimal(dto.price);
-      if (existingItem.price.equals(newPrice)) {
-        return existingItem;
-      }
-      // If price differs, create new item (for price history tracking)
+    if (!item) {
+      item = await this.itemRepository.create({
+        name: dto.name,
+        categoryId: dto.categoryId,
+      } as any);
     }
 
-    // Create new item
-    const item = await this.storeItemRepository.create({
+    // 2. Check if StoreItem exists by storeId + itemId
+    const existingStoreItem = await this.storeItemRepository.findByStoreAndItemId(
+      dto.storeId,
+      item.id,
+    );
+
+    if (existingStoreItem) {
+      const newPrice = new Decimal(dto.price);
+      if (existingStoreItem.price.equals(newPrice)) {
+        return existingStoreItem; // Exact match
+      }
+      // Price differs - create new StoreItem for price history
+    }
+
+    // 3. Create new StoreItem
+    const storeItem = await this.storeItemRepository.create({
       storeId: dto.storeId,
-      name: dto.name,
+      itemId: item.id,
       price: new Decimal(dto.price),
       isDiscounted: dto.isDiscounted ?? false,
     } as Partial<StoreItem>);
 
-    return item;
+    return storeItem;
   }
 
   private validate(dto: CreateStoreItemDto): void {
@@ -51,6 +66,10 @@ export class CreateOrFindStoreItemUseCase {
 
     if (dto.price < 0) {
       throw new BadRequestException('Item price must be non-negative');
+    }
+
+    if (!dto.categoryId || dto.categoryId.trim() === '') {
+      throw new BadRequestException('Category ID is required');
     }
   }
 }

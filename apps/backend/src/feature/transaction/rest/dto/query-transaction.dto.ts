@@ -5,11 +5,13 @@ import {
   IsDateString,
   IsNumber,
   IsInt,
+  IsString,
   Min,
   Max,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { TransactionType } from '../../core/domain/value-objects/transaction-type.vo';
+import { TransactionScope } from '../../core/domain/entities/transaction.entity';
 
 export class QueryTransactionDto {
   @IsUUID()
@@ -19,6 +21,14 @@ export class QueryTransactionDto {
   @IsEnum(TransactionType)
   @IsOptional()
   type?: TransactionType;
+
+  @IsUUID()
+  @IsOptional()
+  familyId?: string;
+
+  @IsEnum(TransactionScope)
+  @IsOptional()
+  scope?: TransactionScope;
 
   @IsDateString()
   @IsOptional()

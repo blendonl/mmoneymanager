@@ -27,7 +27,6 @@ let ExpenseCategoryController = class ExpenseCategoryController {
         this.expenseCategoryService = expenseCategoryService;
     }
     async create(createDto) {
-        console.log(createDto);
         const coreDto = new create_expense_category_dto_1.CreateExpenseCategoryDto(createDto.name, createDto.isConnectedToStore, createDto.parentId);
         const category = await this.expenseCategoryService.create(coreDto);
         return expense_category_response_dto_1.ExpenseCategoryResponseDto.fromEntity(category);

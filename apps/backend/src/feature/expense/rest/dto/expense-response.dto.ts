@@ -2,6 +2,7 @@ import { TransactionResponseDto } from '~feature/transaction/rest';
 import { Expense } from '../../core/domain/entities/expense.entity';
 import { ExpenseCategoryResponseDto } from '~feature/expense-category/rest/dto/expense-category-response.dto';
 import { StoreResponseDto } from '~feature/store/rest/dto/store-response.dto';
+import { ExpenseItemResponseDto } from '~feature/expense-item/rest/dto/expense-item-response.dto';
 
 export class ExpenseResponseDto {
   id: string;
@@ -11,6 +12,7 @@ export class ExpenseResponseDto {
   transaction: TransactionResponseDto;
   category: ExpenseCategoryResponseDto;
   store: StoreResponseDto;
+  items: ExpenseItemResponseDto[];
   name: string;
   createdAt: Date;
   updatedAt: Date;
@@ -26,6 +28,7 @@ export class ExpenseResponseDto {
     dto.category = ExpenseCategoryResponseDto.fromEntity(expense.category);
     dto.transaction = TransactionResponseDto.fromEntity(expense.transaction);
     dto.store = StoreResponseDto.fromEntity(expense.store);
+    dto.items = ExpenseItemResponseDto.fromEntities(expense.items);
     return dto;
   }
 

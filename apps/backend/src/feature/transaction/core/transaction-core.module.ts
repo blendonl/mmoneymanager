@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../../../common/prisma/prisma.module';
+import { FamilyCoreModule } from '../../family/core/family-core.module';
 
 import { TransactionService } from './application/services/transaction.service';
 
@@ -13,7 +14,7 @@ import { GetTransactionStatisticsUseCase } from './application/use-cases/get-tra
 import { PrismaTransactionRepository } from './infrastructure/repositories/prisma-transaction.repository';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, FamilyCoreModule],
   providers: [
     {
       provide: 'TransactionRepository',

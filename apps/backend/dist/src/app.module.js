@@ -23,6 +23,13 @@ const expense_rest_module_1 = require("./feature/expense/rest/expense-rest.modul
 const store_rest_module_1 = require("./feature/store/rest/store-rest.module");
 const income_category_rest_module_1 = require("./feature/income-category/rest/income-category-rest.module");
 const income_rest_module_1 = require("./feature/income/rest/income-rest.module");
+const receipt_rest_module_1 = require("./feature/receipt/rest/receipt-rest.module");
+const family_module_1 = require("./feature/family/family.module");
+const item_core_module_1 = require("./feature/item/core/item-core.module");
+const item_rest_module_1 = require("./feature/item/rest/item-rest.module");
+const store_item_discount_core_module_1 = require("./feature/store-item-discount/core/store-item-discount-core.module");
+const store_item_discount_rest_module_1 = require("./feature/store-item-discount/rest/store-item-discount-rest.module");
+const notification_module_1 = require("./feature/notification/notification.module");
 const auth_guard_1 = require("./feature/auth/rest/guards/auth.guard");
 let AppModule = class AppModule {
 };
@@ -42,6 +49,13 @@ exports.AppModule = AppModule = __decorate([
             store_rest_module_1.StoreRestModule,
             income_category_rest_module_1.IncomeCategoryRestModule,
             income_rest_module_1.IncomeRestModule,
+            receipt_rest_module_1.ReceiptRestModule,
+            family_module_1.FamilyModule,
+            item_core_module_1.ItemCoreModule,
+            item_rest_module_1.ItemRestModule,
+            store_item_discount_core_module_1.StoreItemDiscountCoreModule,
+            store_item_discount_rest_module_1.StoreItemDiscountRestModule,
+            notification_module_1.NotificationModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

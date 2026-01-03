@@ -3,11 +3,13 @@ import {
   Modal,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   ActivityIndicator,
+  StyleSheet,
 } from "react-native";
-import { styles } from "../styles";
+import { Input, Button } from "../../../components/design-system";
+import { useAppTheme } from "../../../theme";
+import { createGlassStyles } from "../../../theme/glassStyles";
 
 interface AddStoreModalProps {
   visible: boolean;
@@ -30,6 +32,9 @@ export function AddStoreModal({
   onCreate,
   onClose,
 }: AddStoreModalProps) {
+  const { theme } = useAppTheme();
+  const glassStyles = createGlassStyles(theme.custom.colors);
+
   return (
     <Modal
       visible={visible}
@@ -37,46 +42,88 @@ export function AddStoreModal({
       transparent={true}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Add New Store</Text>
+      <View
+        style={[
+          styles.modalOverlay,
+          { backgroundColor: theme.custom.colors.backdrop },
+        ]}
+      >
+        <View
+          style={[
+            glassStyles.glassCardStrong,
+            styles.modalContent,
+            { backgroundColor: theme.colors.surface },
+          ]}
+        >
+          <Text
+            style={[
+              styles.modalTitle,
+              theme.custom.typography.h4,
+              { color: theme.custom.colors.text },
+            ]}
+          >
+            Add New Store
+          </Text>
 
-          <TextInput
-            style={styles.input}
+          <Input
             placeholder="Store name"
             value={storeName}
             onChangeText={onStoreName}
+            leftIcon="store"
           />
 
-          <TextInput
-            style={styles.input}
+          <Input
             placeholder="Store location"
             value={storeLocation}
             onChangeText={onStoreLocation}
+            leftIcon="map-marker"
           />
 
           <View style={styles.modalButtons}>
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalCancelButton]}
+            <Button
+              title="Cancel"
               onPress={onClose}
-            >
-              <Text style={styles.modalCancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
+              variant="outlined"
+              style={styles.button}
+            />
 
-            <TouchableOpacity
-              style={[styles.modalButton, styles.modalCreateButton]}
+            <Button
+              title="Create"
               onPress={onCreate}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text style={styles.modalCreateButtonText}>Create</Text>
-              )}
-            </TouchableOpacity>
+              loading={loading}
+              disabled={loading || !storeName.trim()}
+              style={styles.button}
+            />
           </View>
         </View>
       </View>
     </Modal>
   );
 }
+
+const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    borderRadius: 16,
+    padding: 24,
+    width: "85%",
+    maxWidth: 400,
+  },
+  modalTitle: {
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 16,
+    gap: 12,
+  },
+  button: {
+    flex: 1,
+  },
+});

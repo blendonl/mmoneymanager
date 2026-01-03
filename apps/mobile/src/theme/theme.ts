@@ -27,6 +27,10 @@ export const lightTheme = {
     inverseOnSurface: darkColors.text,
     inversePrimary: darkColors.primary,
     backdrop: lightColors.backdrop,
+    gradientStart: lightColors.gradientStart,
+    gradientEnd: lightColors.gradientEnd,
+    glassBackground: lightColors.glassBackground,
+    glassBorder: lightColors.glassBorder,
     elevation: {
       level0: 'transparent',
       level1: lightColors.surface,
@@ -69,6 +73,10 @@ export const darkTheme = {
     inverseOnSurface: lightColors.text,
     inversePrimary: lightColors.primary,
     backdrop: darkColors.backdrop,
+    gradientStart: darkColors.gradientStart,
+    gradientEnd: darkColors.gradientEnd,
+    glassBackground: darkColors.glassBackground,
+    glassBorder: darkColors.glassBorder,
     elevation: {
       level0: 'transparent',
       level1: darkColors.surface,

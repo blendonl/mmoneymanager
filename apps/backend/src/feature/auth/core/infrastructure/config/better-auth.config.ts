@@ -16,7 +16,18 @@ export function createBetterAuthInstance(prisma: PrismaClient) {
       expiresIn: 60 * 60 * 24 * 30,
       updateAge: 60 * 60 * 24,
     },
-    socialProviders: {},
+    socialProviders: {
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID || '',
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+        enabled: !!process.env.GOOGLE_CLIENT_ID,
+      },
+      apple: {
+        clientId: process.env.APPLE_CLIENT_ID || '',
+        clientSecret: process.env.APPLE_CLIENT_SECRET || '',
+        enabled: !!process.env.APPLE_CLIENT_ID,
+      },
+    },
     plugins: [bearer()],
     secret: process.env.BETTER_AUTH_SECRET,
     baseURL: process.env.BETTER_AUTH_URL,

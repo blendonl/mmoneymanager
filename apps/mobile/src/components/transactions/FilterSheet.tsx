@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Modal, Portal } from 'react-native-paper';
-import { Button, Input, Chip } from '../design-system';
+import { Button, Input, Chip, Dropdown } from '../design-system';
 import { useAppTheme } from '../../theme';
-
-export interface TransactionFilters {
-  type: 'all' | 'expense' | 'income';
-  categories: string[];
-  minAmount: string;
-  maxAmount: string;
-  dateFrom: Date | null;
-  dateTo: Date | null;
-}
+import { useFamily } from '../../context/FamilyContext';
+import { TransactionFilters } from '../../features/transactions/types';
 
 interface FilterSheetProps {
   visible: boolean;
@@ -31,6 +24,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
   onClear,
 }) => {
   const { theme } = useAppTheme();
+  const { families } = useFamily();
   const [localFilters, setLocalFilters] = useState<TransactionFilters>(filters);
 
   const handleApply = () => {
@@ -41,6 +35,8 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
   const handleClear = () => {
     const clearedFilters: TransactionFilters = {
       type: 'all',
+      scope: 'all',
+      familyId: null,
       categories: [],
       minAmount: '',
       maxAmount: '',
@@ -63,6 +59,14 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
 
   const setType = (type: 'all' | 'expense' | 'income') => {
     setLocalFilters((prev) => ({ ...prev, type }));
+  };
+
+  const setScope = (scope: 'all' | 'personal' | 'family') => {
+    setLocalFilters((prev) => ({
+      ...prev,
+      scope,
+      familyId: scope !== 'family' ? null : prev.familyId,
+    }));
   };
 
   return (
@@ -116,6 +120,52 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
               />
             </View>
           </View>
+
+          <View style={styles.section}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                theme.custom.typography.h5,
+                { color: theme.custom.colors.text },
+              ]}
+            >
+              Transaction Scope
+            </Text>
+            <View style={styles.chipRow}>
+              <Chip
+                label="All"
+                selected={localFilters.scope === 'all'}
+                onPress={() => setScope('all')}
+              />
+              <Chip
+                label="Personal"
+                selected={localFilters.scope === 'personal'}
+                onPress={() => setScope('personal')}
+              />
+              <Chip
+                label="Family"
+                selected={localFilters.scope === 'family'}
+                onPress={() => setScope('family')}
+              />
+            </View>
+          </View>
+
+          {localFilters.scope === 'family' && families.length > 0 && (
+            <View style={styles.section}>
+              <Dropdown
+                label="Select Family"
+                value={localFilters.familyId}
+                items={families.map((family) => ({
+                  label: family.name,
+                  value: family.id,
+                }))}
+                onValueChange={(value) =>
+                  setLocalFilters((prev) => ({ ...prev, familyId: value }))
+                }
+                placeholder="Choose a family"
+              />
+            </View>
+          )}
 
           <View style={styles.section}>
             <Text

@@ -5,11 +5,15 @@ export declare class CreateExpenseDto {
     storeName: string;
     storeLocation: string;
     items: CreateExpenseItemDto[];
+    familyId?: string;
+    recordedAt?: Date;
     constructor(data: {
         userId: string;
         categoryId: string;
         storeName: string;
         storeLocation: string;
         items: CreateExpenseItemDto[];
+        familyId?: string;
+        recordedAt?: Date;
     });
 }

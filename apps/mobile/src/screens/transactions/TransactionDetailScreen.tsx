@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,14 +7,14 @@ import {
   Alert,
   TouchableOpacity,
   Image,
-} from 'react-native';
-import { IconButton, Divider } from 'react-native-paper';
-import ImageView from 'react-native-image-viewing';
-import { useAppTheme } from '../../theme';
-import { Transaction } from '../../hooks/useTransactions';
-import { Card } from '../../components/design-system';
-import { CategoryIcon } from '../../components/transactions/CategoryIcon';
-import { apiClient } from '../../api/client';
+} from "react-native";
+import { IconButton, Divider } from "react-native-paper";
+import ImageView from "react-native-image-viewing";
+import { useAppTheme } from "../../theme";
+import { Transaction } from "../../features/transactions/types";
+import { Card } from "../../components/design-system";
+import { CategoryIcon } from "../../components/transactions/CategoryIcon";
+import { apiClient } from "../../api/client";
 
 interface TransactionDetailScreenProps {
   route: {
@@ -35,24 +35,24 @@ export default function TransactionDetailScreen({
   const [imageViewerIndex, setImageViewerIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
 
-  const isExpense = transaction.type === 'expense';
+  const isExpense = transaction.type === "expense";
   const date = transaction.transaction.createdAt
     ? new Date(transaction.transaction.createdAt)
     : new Date();
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -63,31 +63,34 @@ export default function TransactionDetailScreen({
 
   const handleDelete = () => {
     Alert.alert(
-      'Delete Transaction',
-      'Are you sure you want to delete this transaction? This action cannot be undone.',
+      "Delete Transaction",
+      "Are you sure you want to delete this transaction? This action cannot be undone.",
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Delete',
-          style: 'destructive',
+          text: "Delete",
+          style: "destructive",
           onPress: async () => {
             try {
               setDeleting(true);
               const endpoint = isExpense
                 ? `/expenses/${transaction.id}`
                 : `/transactions/${transaction.transaction.id}`;
-              await apiClient.post(endpoint, { _method: 'DELETE' });
-              Alert.alert('Success', 'Transaction deleted successfully', [
-                { text: 'OK', onPress: () => navigation.goBack() },
+              await apiClient.post(endpoint, { _method: "DELETE" });
+              Alert.alert("Success", "Transaction deleted successfully", [
+                { text: "OK", onPress: () => navigation.goBack() },
               ]);
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete transaction');
+              Alert.alert(
+                "Error",
+                error.message || "Failed to delete transaction",
+              );
             } finally {
               setDeleting(false);
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -96,13 +99,16 @@ export default function TransactionDetailScreen({
       return transaction.transaction.value;
     }
     return transaction.items.reduce(
-      (sum, item) => sum + item.price - (item.discount || 0),
-      0
+      (sum, item) =>
+        sum + (item.price - (item.discount || 0)) * (item.quantity || 1),
+      0,
     );
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <ScrollView>
         <Card style={styles.headerCard} elevation={2}>
           <View style={styles.header}>
@@ -112,13 +118,13 @@ export default function TransactionDetailScreen({
                   styles.iconContainer,
                   {
                     backgroundColor: isExpense
-                      ? theme.custom.colors.error + '20'
-                      : theme.custom.colors.success + '20',
+                      ? theme.custom.colors.error + "20"
+                      : theme.custom.colors.success + "20",
                   },
                 ]}
               >
                 <CategoryIcon
-                  categoryName={transaction.category.name}
+                  categoryName={transaction.category?.name || "Unknown"}
                   size={32}
                   color={
                     isExpense
@@ -133,7 +139,10 @@ export default function TransactionDetailScreen({
                   size={24}
                   iconColor={theme.custom.colors.text}
                   onPress={() => {
-                    Alert.alert('Coming Soon', 'Edit functionality will be available soon');
+                    Alert.alert(
+                      "Coming Soon",
+                      "Edit functionality will be available soon",
+                    );
                   }}
                 />
                 <IconButton
@@ -153,7 +162,7 @@ export default function TransactionDetailScreen({
                 { color: theme.custom.colors.text },
               ]}
             >
-              {transaction.category.name}
+              {transaction.category?.name || "Unknown"}
             </Text>
 
             <Text
@@ -167,7 +176,7 @@ export default function TransactionDetailScreen({
                 },
               ]}
             >
-              {isExpense ? '−' : '+'} ${transaction.transaction.value.toFixed(2)}
+              {`${isExpense ? "−" : "+"} $${transaction.transaction.value.toFixed(2)}`}
             </Text>
 
             <View style={styles.dateContainer}>
@@ -223,7 +232,7 @@ export default function TransactionDetailScreen({
                   { color: theme.custom.colors.text },
                 ]}
               >
-                {transaction.store.name}
+                {transaction.store?.name || "Unknown"}
               </Text>
             </View>
             {transaction.store.location && (
@@ -285,7 +294,7 @@ export default function TransactionDetailScreen({
                         { color: theme.custom.colors.text },
                       ]}
                     >
-                      {item.name}
+                      {`${(item.quantity || 1) > 1 ? `${item.quantity}x ` : ""}${item.name || "Unknown item"}`}
                     </Text>
                     {item.discount && item.discount > 0 && (
                       <Text
@@ -306,10 +315,14 @@ export default function TransactionDetailScreen({
                       { color: theme.custom.colors.text },
                     ]}
                   >
-                    ${(item.price - (item.discount || 0)).toFixed(2)}
+                    $
+                    {(
+                      ((item.price || 0) - (item.discount || 0)) *
+                      (item.quantity || 1)
+                    ).toFixed(2)}
                   </Text>
                 </View>
-                {index < transaction.items.length - 1 && (
+                {index < (transaction.items?.length || 0) - 1 && (
                   <Divider style={{ marginVertical: 8 }} />
                 )}
               </View>
@@ -401,24 +414,24 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   headerTop: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 16,
   },
   iconContainer: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   headerActions: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   categoryName: {
     marginBottom: 8,
@@ -427,7 +440,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   dateContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   date: {},
   time: {
@@ -439,24 +452,24 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 8,
   },
   sectionTitle: {},
   sectionSubtitle: {},
   infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingVertical: 8,
   },
   infoLabel: {},
   infoValue: {},
   itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   itemInfo: {
     flex: 1,
@@ -472,7 +485,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   receiptGrid: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     paddingVertical: 8,
   },

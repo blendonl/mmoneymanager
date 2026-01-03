@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "expense_item" ADD COLUMN     "quantity" INTEGER NOT NULL DEFAULT 1;

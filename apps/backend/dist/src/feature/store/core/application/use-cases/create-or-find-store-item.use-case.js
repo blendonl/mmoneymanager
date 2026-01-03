@@ -17,25 +17,34 @@ const common_1 = require("@nestjs/common");
 const prismaNamespace_1 = require("../../../../../../prisma/generated/prisma/internal/prismaNamespace");
 let CreateOrFindStoreItemUseCase = class CreateOrFindStoreItemUseCase {
     storeItemRepository;
-    constructor(storeItemRepository) {
+    itemRepository;
+    constructor(storeItemRepository, itemRepository) {
         this.storeItemRepository = storeItemRepository;
+        this.itemRepository = itemRepository;
     }
     async execute(dto) {
         this.validate(dto);
-        const existingItem = await this.storeItemRepository.findByStoreAndName(dto.storeId, dto.name);
-        if (existingItem) {
+        let item = await this.itemRepository.findByNameAndCategory(dto.name, dto.categoryId);
+        if (!item) {
+            item = await this.itemRepository.create({
+                name: dto.name,
+                categoryId: dto.categoryId,
+            });
+        }
+        const existingStoreItem = await this.storeItemRepository.findByStoreAndItemId(dto.storeId, item.id);
+        if (existingStoreItem) {
             const newPrice = new prismaNamespace_1.Decimal(dto.price);
-            if (existingItem.price.equals(newPrice)) {
-                return existingItem;
+            if (existingStoreItem.price.equals(newPrice)) {
+                return existingStoreItem;
             }
         }
-        const item = await this.storeItemRepository.create({
+        const storeItem = await this.storeItemRepository.create({
             storeId: dto.storeId,
-            name: dto.name,
+            itemId: item.id,
             price: new prismaNamespace_1.Decimal(dto.price),
             isDiscounted: dto.isDiscounted ?? false,
         });
-        return item;
+        return storeItem;
     }
     validate(dto) {
         if (!dto.storeId || dto.storeId.trim() === '') {
@@ -47,12 +56,16 @@ let CreateOrFindStoreItemUseCase = class CreateOrFindStoreItemUseCase {
         if (dto.price < 0) {
             throw new common_1.BadRequestException('Item price must be non-negative');
         }
+        if (!dto.categoryId || dto.categoryId.trim() === '') {
+            throw new common_1.BadRequestException('Category ID is required');
+        }
     }
 };
 exports.CreateOrFindStoreItemUseCase = CreateOrFindStoreItemUseCase;
 exports.CreateOrFindStoreItemUseCase = CreateOrFindStoreItemUseCase = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('StoreItemRepository')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)('ItemRepository')),
+    __metadata("design:paramtypes", [Object, Object])
 ], CreateOrFindStoreItemUseCase);
 //# sourceMappingURL=create-or-find-store-item.use-case.js.map

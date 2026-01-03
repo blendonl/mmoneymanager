@@ -1,8 +1,8 @@
-import { StoreItemCategory as PrismaStoreItemCategory } from 'prisma/generated/prisma/client';
+import { ItemCategory as PrismaItemCategory } from 'prisma/generated/prisma/client';
 import { StoreItemCategory } from '../../domain/entities/store-item-category.entity';
 
 export class StoreItemCategoryMapper {
-  static toDomain(prismaCategory: PrismaStoreItemCategory): StoreItemCategory {
+  static toDomain(prismaCategory: PrismaItemCategory): StoreItemCategory {
     return new StoreItemCategory({
       id: prismaCategory.id,
       parentId: prismaCategory.parentId,

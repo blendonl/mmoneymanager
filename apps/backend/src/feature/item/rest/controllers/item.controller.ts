@@ -1,0 +1,80 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
+import { ItemService } from '../../core/application/services/item.service';
+import { CreateItemRequestDto } from '../dto/create-item-request.dto';
+import { UpdateItemRequestDto } from '../dto/update-item-request.dto';
+import { ItemResponseDto } from '../dto/item-response.dto';
+import { CreateItemDto } from '../../core/application/dto/create-item.dto';
+import { UpdateItemDto } from '../../core/application/dto/update-item.dto';
+import { Pagination } from '../../../transaction/core/application/dto/pagination.dto';
+
+@Controller('items')
+export class ItemController {
+  constructor(private readonly itemService: ItemService) {}
+
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createDto: CreateItemRequestDto) {
+    const coreDto = new CreateItemDto(createDto.name, createDto.categoryId);
+
+    const item = await this.itemService.create(coreDto);
+    return ItemResponseDto.fromEntity(item);
+  }
+
+  @Get()
+  async findAll(
+    @Query('categoryId') categoryId?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    const pagination = new Pagination(page, limit);
+
+    const result = await this.itemService.findAll(categoryId, pagination);
+
+    return {
+      data: ItemResponseDto.fromEntities(result.data),
+      total: result.total,
+      page: pagination.page,
+      limit: pagination.limit,
+    };
+  }
+
+  @Get('search')
+  async search(@Query('name') name: string) {
+    const item = await this.itemService.findByName(name);
+    return item ? ItemResponseDto.fromEntity(item) : null;
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const item = await this.itemService.findById(id);
+    return ItemResponseDto.fromEntity(item);
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateItemRequestDto,
+  ) {
+    const coreDto = new UpdateItemDto(updateDto.name, updateDto.categoryId);
+
+    const item = await this.itemService.update(id, coreDto);
+    return ItemResponseDto.fromEntity(item);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('id') id: string) {
+    await this.itemService.delete(id);
+  }
+}

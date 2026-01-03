@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { Button as PaperButton } from 'react-native-paper';
 import { useAppTheme } from '../../theme';
 
-type ButtonVariant = 'primary' | 'secondary' | 'text' | 'outlined';
+type ButtonVariant = 'primary' | 'secondary' | 'text' | 'outlined' | 'glass';
 
 interface ButtonProps {
   title: string;
@@ -38,9 +38,32 @@ export const Button: React.FC<ButtonProps> = ({
         return 'outlined';
       case 'text':
         return 'text';
+      case 'glass':
+        return 'contained';
       default:
         return 'contained';
     }
+  };
+
+  const getGlassStyles = () => {
+    if (variant === 'glass') {
+      return {
+        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        borderRadius: 12,
+      };
+    }
+    return {};
+  };
+
+  const getGlassLabelStyles = () => {
+    if (variant === 'glass') {
+      return {
+        color: '#FFFFFF',
+        fontWeight: '700' as const,
+        letterSpacing: 0.5,
+      };
+    }
+    return {};
   };
 
   return (
@@ -53,12 +76,14 @@ export const Button: React.FC<ButtonProps> = ({
       style={[
         styles.button,
         fullWidth && styles.fullWidth,
+        getGlassStyles(),
         style,
       ]}
       contentStyle={styles.content}
       labelStyle={[
         styles.label,
         { ...theme.custom.typography.button },
+        getGlassLabelStyles(),
       ]}
     >
       {title}

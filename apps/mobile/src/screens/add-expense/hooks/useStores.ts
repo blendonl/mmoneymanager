@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert } from "react-native";
 import { apiClient } from "../../../api/client";
-import { Store } from "../types";
+import { Store } from "../../../features/expenses/types";
 
 export function useStores() {
   const [stores, setStores] = useState<Store[]>([]);
@@ -66,9 +66,9 @@ export function useStores() {
       });
 
       const newStore: Store = {
-        id: response.data.id,
-        name: response.data.name,
-        location: response.data.location,
+        id: response.id,
+        name: response.name,
+        location: response.location,
       };
 
       setSelectedStore(newStore);
@@ -110,5 +110,7 @@ export function useStores() {
     setNewStoreName,
     setNewStoreLocation,
     setShowStoreDropdown,
+    setStoreInput,
+    setStoreLocation,
   };
 }

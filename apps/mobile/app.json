@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
+    "scheme": "mmoneymanager",
     "ios": {
       "bundleIdentifier": "com.mmoneymanager.app",
       "supportsTablet": true

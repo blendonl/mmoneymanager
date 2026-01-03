@@ -23,17 +23,18 @@ let PrismaStoreItemRepository = class PrismaStoreItemRepository {
         const item = await this.prisma.storeItem.create({
             data: {
                 storeId: data.storeId,
-                name: data.name,
+                itemId: data.itemId,
                 price: new prismaNamespace_1.Decimal(data.price?.toString() || '0'),
-                categoryId: data.categoryId,
                 isDiscounted: data.isDiscounted ?? false,
             },
+            include: { item: true },
         });
         return store_item_mapper_1.StoreItemMapper.toDomain(item);
     }
     async findById(id) {
         const item = await this.prisma.storeItem.findUnique({
             where: { id },
+            include: { item: true },
         });
         return item ? store_item_mapper_1.StoreItemMapper.toDomain(item) : null;
     }
@@ -41,9 +42,23 @@ let PrismaStoreItemRepository = class PrismaStoreItemRepository {
         const item = await this.prisma.storeItem.findFirst({
             where: {
                 storeId,
-                name,
+                item: {
+                    name,
+                },
             },
             orderBy: { createdAt: 'desc' },
+            include: { item: true },
+        });
+        return item ? store_item_mapper_1.StoreItemMapper.toDomain(item) : null;
+    }
+    async findByStoreAndItemId(storeId, itemId) {
+        const item = await this.prisma.storeItem.findFirst({
+            where: {
+                storeId,
+                itemId,
+            },
+            orderBy: { createdAt: 'desc' },
+            include: { item: true },
         });
         return item ? store_item_mapper_1.StoreItemMapper.toDomain(item) : null;
     }
@@ -51,9 +66,10 @@ let PrismaStoreItemRepository = class PrismaStoreItemRepository {
         const [items, total] = await Promise.all([
             this.prisma.storeItem.findMany({
                 where: { storeId },
-                orderBy: { name: 'asc' },
+                orderBy: { createdAt: 'desc' },
                 skip: pagination?.skip,
                 take: pagination?.take,
+                include: { item: true },
             }),
             this.prisma.storeItem.count({ where: { storeId } }),
         ]);
@@ -65,9 +81,10 @@ let PrismaStoreItemRepository = class PrismaStoreItemRepository {
     async findAll(pagination) {
         const [items, total] = await Promise.all([
             this.prisma.storeItem.findMany({
-                orderBy: { name: 'asc' },
+                orderBy: { createdAt: 'desc' },
                 skip: pagination?.skip,
                 take: pagination?.take,
+                include: { item: true },
             }),
             this.prisma.storeItem.count(),
         ]);
@@ -78,9 +95,6 @@ let PrismaStoreItemRepository = class PrismaStoreItemRepository {
     }
     async update(id, data) {
         const updateData = {};
-        if (data.name !== undefined) {
-            updateData.name = data.name;
-        }
         if (data.price !== undefined) {
             updateData.price = new prismaNamespace_1.Decimal(data.price.toString());
         }
@@ -90,6 +104,7 @@ let PrismaStoreItemRepository = class PrismaStoreItemRepository {
         const item = await this.prisma.storeItem.update({
             where: { id },
             data: updateData,
+            include: { item: true },
         });
         return store_item_mapper_1.StoreItemMapper.toDomain(item);
     }

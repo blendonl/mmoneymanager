@@ -6,6 +6,8 @@ export class CreateExpenseDto {
   storeName: string;
   storeLocation: string;
   items: CreateExpenseItemDto[];
+  familyId?: string;
+  recordedAt?: Date;
 
   constructor(data: {
     userId: string;
@@ -13,11 +15,15 @@ export class CreateExpenseDto {
     storeName: string;
     storeLocation: string;
     items: CreateExpenseItemDto[];
+    familyId?: string;
+    recordedAt?: Date;
   }) {
     this.userId = data.userId;
     this.categoryId = data.categoryId;
     this.storeName = data.storeName;
     this.storeLocation = data.storeLocation;
     this.items = data.items;
+    this.familyId = data.familyId;
+    this.recordedAt = data.recordedAt;
   }
 }

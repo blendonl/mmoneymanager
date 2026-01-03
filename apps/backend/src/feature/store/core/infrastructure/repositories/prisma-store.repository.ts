@@ -45,6 +45,22 @@ export class PrismaStoreRepository implements IStoreRepository {
     return store ? StoreMapper.toDomain(store) : null;
   }
 
+  async findBySimilarName(name: string): Promise<Store | null> {
+    const store = await this.prisma.store.findFirst({
+      where: {
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    return store ? StoreMapper.toDomain(store) : null;
+  }
+
   async findAll(
     filters?: { search?: string },
     pagination?: Pagination,

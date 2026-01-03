@@ -7,10 +7,12 @@ class ExpenseItemMapper {
         return new expense_item_entity_1.ExpenseItem({
             id: prismaExpenseItem.id,
             itemId: prismaExpenseItem.itemId,
+            itemName: prismaExpenseItem.item.item.name,
             expenseId: prismaExpenseItem.expenseId,
-            categoryId: prismaExpenseItem.item.categoryId,
+            categoryId: prismaExpenseItem.item.item.categoryId,
             price: prismaExpenseItem.price,
             discount: prismaExpenseItem.discount,
+            quantity: prismaExpenseItem.quantity,
             createdAt: prismaExpenseItem.createdAt,
             updatedAt: prismaExpenseItem.updatedAt,
         });
@@ -19,10 +21,12 @@ class ExpenseItemMapper {
         return {
             id: expenseItem.id,
             itemId: expenseItem.itemId,
+            itemName: expenseItem.itemName,
             expenseId: expenseItem.expenseId,
             categoryId: expenseItem.categoryId,
             price: expenseItem.price,
             discount: expenseItem.discount,
+            quantity: expenseItem.quantity,
             createdAt: expenseItem.createdAt,
             updatedAt: expenseItem.updatedAt,
         };

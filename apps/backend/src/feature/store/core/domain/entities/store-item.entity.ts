@@ -1,12 +1,13 @@
 import { Decimal } from 'prisma/generated/prisma/internal/prismaNamespace';
+import { Item } from '~feature/item/core';
 
 export interface StoreItemProps {
   id: string;
   storeId: string;
-  name: string;
+  itemId: string;
   price: Decimal;
   isDiscounted: boolean;
-  categoryId: string;
+  item?: Item;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,8 +29,8 @@ export class StoreItem {
       throw new Error('Store ID is required');
     }
 
-    if (!props.name || props.name.trim() === '') {
-      throw new Error('Store item name is required');
+    if (!props.itemId || props.itemId.trim() === '') {
+      throw new Error('Item ID is required');
     }
 
     if (!props.price || props.price.toNumber() < 0) {
@@ -45,10 +46,6 @@ export class StoreItem {
     }
   }
 
-  get categoryId(): string {
-    return this.props.categoryId;
-  }
-
   get id(): string {
     return this.props.id;
   }
@@ -57,8 +54,12 @@ export class StoreItem {
     return this.props.storeId;
   }
 
-  get name(): string {
-    return this.props.name;
+  get itemId(): string {
+    return this.props.itemId;
+  }
+
+  get item(): Item | undefined {
+    return this.props.item;
   }
 
   get price(): Decimal {
@@ -77,17 +78,28 @@ export class StoreItem {
     return this.props.updatedAt;
   }
 
-  getCurrentPrice(): Decimal {
-    return this.props.price;
+  getCurrentPrice(activeDiscount?: any): Decimal {
+    if (!this.props.isDiscounted || !activeDiscount || !activeDiscount.isActive()) {
+      return this.props.price;
+    }
+    return this.props.price.minus(activeDiscount.discount);
+  }
+
+  getDiscountPercentage(activeDiscount?: any): number {
+    if (!this.props.isDiscounted || !activeDiscount || !activeDiscount.isActive()) {
+      return 0;
+    }
+    return (activeDiscount.discount.toNumber() / this.props.price.toNumber()) * 100;
   }
 
   toJSON() {
     return {
       id: this.props.id,
       storeId: this.props.storeId,
-      name: this.props.name,
+      itemId: this.props.itemId,
       price: this.props.price.toNumber(),
       isDiscounted: this.props.isDiscounted,
+      item: this.props.item?.toJSON(),
       createdAt: this.props.createdAt,
       updatedAt: this.props.updatedAt,
     };

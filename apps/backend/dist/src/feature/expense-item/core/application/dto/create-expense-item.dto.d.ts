@@ -4,6 +4,7 @@ export declare class CreateExpenseItemDto {
     itemName: string;
     itemPrice: number;
     discount?: number;
+    quantity?: number;
     itemId?: string;
     constructor(data: {
         expenseId: string;
@@ -11,6 +12,7 @@ export declare class CreateExpenseItemDto {
         itemName: string;
         itemPrice: number;
         discount?: number;
+        quantity?: number;
         itemId?: string;
     });
 }

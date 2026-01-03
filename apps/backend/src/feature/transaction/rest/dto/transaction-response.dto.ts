@@ -6,6 +6,7 @@ export class TransactionResponseDto {
   userId: string;
   type: TransactionType;
   value: number;
+  recordedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 
@@ -14,6 +15,7 @@ export class TransactionResponseDto {
     this.userId = transaction.userId;
     this.type = transaction.type;
     this.value = transaction.value.toNumber();
+    this.recordedAt = transaction.recordedAt;
     this.createdAt = transaction.createdAt;
     this.updatedAt = transaction.updatedAt;
   }
