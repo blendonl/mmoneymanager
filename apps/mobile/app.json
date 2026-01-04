@@ -7,13 +7,30 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "scheme": "mmoneymanager",
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": []
+        }
+      ]
+    ],
     "ios": {
       "bundleIdentifier": "com.mmoneymanager.app",
       "supportsTablet": true
     },
     "android": {
       "package": "com.mmoneymanager.app",
-      "usesCleartextTraffic": true
+      "usesCleartextTraffic": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "android.permission.POST_NOTIFICATIONS"
+      ]
     }
   }
 }

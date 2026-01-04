@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiClient } from "../api/client";
+import { useAuth } from "./AuthContext";
 
 interface Family {
   id: string;
@@ -63,6 +64,7 @@ export const FamilyProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { token, isLoading: authLoading } = useAuth();
   const [families, setFamilies] = useState<Family[]>([]);
   const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
   const [pendingInvitations, setPendingInvitations] = useState<
@@ -71,10 +73,12 @@ export const FamilyProvider = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadStoredFamily();
-    fetchFamilies();
-    fetchPendingInvitations();
-  }, []);
+    if (!authLoading && token) {
+      loadStoredFamily();
+      fetchFamilies();
+      fetchPendingInvitations();
+    }
+  }, [token, authLoading]);
 
   const loadStoredFamily = async () => {
     const storedFamilyId = await AsyncStorage.getItem("selectedFamilyId");
