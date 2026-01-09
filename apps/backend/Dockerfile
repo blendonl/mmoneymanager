@@ -2,12 +2,18 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn ./.yarn
+COPY apps/backend/package.json ./apps/backend/
+COPY packages ./packages
 
-COPY . .
+RUN corepack enable && yarn workspaces focus @mmoneymanager/backend
+
+COPY apps/backend ./apps/backend
+
+WORKDIR /app/apps/backend
 RUN npx prisma generate
-RUN npm run build
+RUN yarn build
 
 FROM node:20-alpine AS production
 
@@ -15,13 +21,19 @@ WORKDIR /app
 
 RUN apk add --no-cache curl
 
-COPY package*.json ./
-RUN npm ci --only=production
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn ./.yarn
+COPY apps/backend/package.json ./apps/backend/
+COPY packages ./packages
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+RUN corepack enable && yarn workspaces focus @mmoneymanager/backend --production
+
+COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
+COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 EXPOSE 3000
+
+WORKDIR /app/apps/backend
 
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main.js"]
