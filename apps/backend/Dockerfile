@@ -5,7 +5,6 @@ WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn ./.yarn
 COPY apps/backend/package.json ./apps/backend/
-COPY packages ./packages
 
 RUN corepack enable && yarn workspaces focus @mmoneymanager/backend
 
@@ -24,7 +23,6 @@ RUN apk add --no-cache curl
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn ./.yarn
 COPY apps/backend/package.json ./apps/backend/
-COPY packages ./packages
 
 RUN corepack enable && yarn workspaces focus @mmoneymanager/backend --production
 
