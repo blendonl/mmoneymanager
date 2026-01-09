@@ -11,7 +11,7 @@ RUN corepack enable && yarn workspaces focus @mmoneymanager/backend
 COPY apps/backend ./apps/backend
 
 WORKDIR /app/apps/backend
-RUN npx prisma generate
+RUN DATABASE_URL="postgresql://build:build@localhost:5432/build" npx prisma generate
 RUN yarn build
 
 FROM node:20-alpine AS production
